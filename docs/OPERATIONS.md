@@ -3,10 +3,12 @@
 ## 1. 环境
 
 - 源码：`/data/projects/homepage`
-- 目标：`miles-01` Dokploy
-- 公网入口：Dokploy Traefik 独占 80/443
-- 目标域名：`xyh.wiki`，可选 `www.xyh.wiki` 永久跳转到根域
+- 部署方式：Dokploy Git/Dockerfile 应用
+- 正式地址：`https://xyh.wiki/`
 - 容器端口：3000，仅 expose，不配置宿主机 published port
+- 当前状态：正式站点已经上线；本地未发布改动不代表线上已更新
+
+内部主机角色和地址属于运维信息，不写入公开页面。
 
 ## 2. 本地验证
 
@@ -17,24 +19,31 @@ docker run --rm -d --name xyh-homepage-local -p 127.0.0.1:4300:3000 xyh-homepage
 curl -fsS http://127.0.0.1:4300/healthz
 curl -fsS http://127.0.0.1:4300/robots.txt
 curl -fsS -o /dev/null -w '%{http_code}\n' http://127.0.0.1:4300/not-found
+curl -fsSI http://127.0.0.1:4300/advertising/
 docker rm -f xyh-homepage-local
 ```
 
-本地 published port 仅用于开发验证，不复制到 Dokploy。
+预期：
+
+- `/healthz` 返回 200 和 `ok`；
+- 未知路径返回 404；
+- `/advertising/` 永久跳转到 `/privacy/`；
+- 公开 HTML 不包含内部主机或未启用的规划。
 
 ## 3. 发布前门禁
 
 1. 确认 Git 工作区只包含本项目变更。
-2. 运行 `npm run test`、`git diff --check`、Docker 构建和容器健康检查。
-3. 确认 `SITE_URL=https://xyh.wiki`。
-4. 确认联系邮箱真实可收信；不可用时先替换站内地址。
-5. AdSense 尚未批准时保持两个广告变量为空。
-6. 记录镜像摘要和 SHA-256；若已有线上版本，记录回滚目标。
-7. 不复制 `.env`、秘密、开发数据库或其他项目工作区。
+2. 运行 `npm run test`、`git diff --check`、Node 语法检查和 JSON 校验。
+3. 运行 Docker 构建、容器健康检查和关键路径 HTTP 检查。
+4. 检查桌面与移动端布局、搜索、筛选、键盘焦点和横向溢出。
+5. 确认 `SITE_URL=https://xyh.wiki`。
+6. 确认联系邮箱真实可用。
+7. 记录当前线上 Git 提交或部署版本作为回滚目标。
+8. 不复制 `.env`、秘密、开发数据库或其他项目工作区。
 
 ## 4. Dokploy 部署
 
-推荐 Git 仓库 Dockerfile 应用：
+推荐配置：
 
 - Build context：仓库根目录
 - Dockerfile：`Dockerfile`
@@ -44,16 +53,17 @@ docker rm -f xyh-homepage-local
 - Host published ports：无
 - 网络：Dokploy/Traefik 默认网络
 
-如使用 Compose，采用 `deploy/dokploy-compose.yaml`，不要额外启动宿主机 Caddy。
+如使用 Compose，采用 `deploy/dokploy-compose.yaml`，不要额外启动占用公网 80/443 的服务。
 
 ## 5. DNS 与 TLS
 
-在 DNS 提供商创建根域记录指向 miles-01。若使用 Cloudflare：
+DNS 和 TLS 已完成配置。更换源站或路由时：
 
-1. 先用 DNS only 验证源站路由和 TLS。
-2. 确认 Traefik 已签发证书、HTTP 永久跳转 HTTPS。
-3. 再根据既有策略启用代理。
-4. `www` 应一对一永久跳转至 `https://xyh.wiki/`，不要形成两个可索引站点。
+1. 记录当前 DNS、代理状态和回滚值。
+2. 先验证新源站路由与证书。
+3. 使用 `curl` 和桌面、移动网络验证 HTTPS。
+4. 保持根域为唯一 canonical 地址。
+5. 若配置 `www`，使用一对一永久跳转到根域。
 
 ## 6. 上线验证
 
@@ -63,41 +73,52 @@ curl -fsS https://xyh.wiki/healthz
 curl -fsS https://xyh.wiki/robots.txt
 curl -fsS https://xyh.wiki/sitemap.xml
 curl -fsSI https://xyh.wiki/services/audio-convert/
+curl -fsSI https://xyh.wiki/advertising/
 curl -fsSI https://xyh.wiki/does-not-exist
 ```
 
 还需验证：
 
-- 首页和政策页状态 200；未知页 404。
-- 容器 UID 非 0、健康、无宿主机 published port。
-- Traefik 路由、源站 TLS 与 Cloudflare HTTPS。
-- 桌面和 360–430px 移动端布局、键盘焦点、无横向裁切。
-- 渲染 HTML 中 title、description、canonical、robots、H1、正文和 JSON-LD。
-- 断链与全部服务外跳。
-- Search Console 提交 Sitemap；真实抓取和 Core Web Vitals 需要上线后观察。
+- 首页和政策页返回 200，未知页返回 404。
+- 旧 `/advertising/` 地址永久跳转到 `/privacy/`。
+- 容器以非 root 用户运行、健康、无宿主机 published port。
+- 首页搜索和所有分类筛选正常。
+- 桌面和 360–430px 移动端无横向裁切。
+- HTML 中 title、description、canonical、robots、H1、正文和 JSON-LD 正确。
+- 非公开项目页为 `noindex`，并从 Sitemap 排除。
+- 公开 HTML 不含内部主机、端口和未启用规划。
 
-## 7. AdSense 启用
+## 7. 添加项目
 
-只有账户和站点通过审核、隐私政策已复核、CMP 已配置后执行：
+1. 在 `data/services.json` 增加项目记录。
+2. 如需新分类或访问类型，编辑 `data/catalog.json`。
+3. 同步受影响的使用说明或项目文档。
+4. 运行 `npm run test`。
+5. 本地检查首页项目数量、筛选项、详情页、Sitemap 和索引状态。
+6. 完成评审后再提交和发布。
 
-1. 在 Dokploy 构建参数设置真实 `ADSENSE_CLIENT` 与 `ADSENSE_PUBLISHER_ID`。
-2. 根据批准的广告布局实现并审阅广告单元；不要只依赖当前文字预留位。
-3. 重新构建，确认 `/ads.txt` 内容与 AdSense 账户给出的记录完全一致。
-4. 验证 EEA/英国/瑞士同意消息、拒绝路径、撤回选择和非个性化广告。
-5. 检查 CSP 控制台错误、广告与按钮间距、CLS、移动端遮挡和无填充状态。
-6. 更新隐私政策和广告披露的实际启用日期。
+构建器会阻止重复 slug、名称、URL、未知分类、未知访问类型、字段缺失和不安全 URL。
 
 ## 8. 备份与回滚
 
 网站无数据库和持久卷。备份对象为 Git commit、镜像摘要、Dokploy 配置和 DNS 路由记录。
 
-回滚条件：健康检查失败、首页/政策页不可用、TLS 错误、严重布局阻断、错误广告脚本或 CSP 使主要页面失效。
+回滚条件：
 
-回滚动作：在 Dokploy 恢复上一镜像/部署；若根域刚切换且源站不可用，恢复上一 DNS 记录；完成后再次验证 HTTPS、首页和健康检查。
+- 健康检查失败；
+- 首页或政策页不可用；
+- TLS 错误；
+- 搜索、导航或布局严重阻断；
+- Sitemap、canonical 或索引策略错误；
+- 公开页面泄露内部信息。
+
+回滚动作：在 Dokploy 恢复上一部署或镜像；如同时修改了 DNS，则恢复上一记录。完成后重新验证 HTTPS、首页、健康检查和关键页面。
 
 ## 9. 故障排查
 
 - 404 异常：检查 Caddy `try_files` 和生成目录。
-- canonical 错误：检查构建参数 `SITE_URL`，重新构建，不在运行时替换 HTML。
-- 服务遗漏：更新 `data/services.json`，同步功能规格和项目规划后重新测试。
-- 广告未显示：先检查审批、ads.txt、CMP、CSP 和浏览器阻止情况，不通过诱导点击或扩大广告密度“修复”。
+- canonical 错误：检查 `SITE_URL`，重新构建。
+- 项目遗漏：检查 `data/services.json` 是否通过构建校验。
+- 分类未显示：检查 `data/catalog.json` 的分类 ID 和标签。
+- 构建提示模板变量未解析：检查模板占位符和 `scripts/build.mjs` 的替换参数是否同步。
+- 样式在浏览器未更新：确认 HTML 中资源版本参数已经变化，并检查当前部署版本与 CDN 缓存。

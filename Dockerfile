@@ -5,9 +5,7 @@ COPY data ./data
 COPY src ./src
 COPY scripts ./scripts
 ARG SITE_URL=https://xyh.wiki
-ARG ADSENSE_CLIENT=
-ARG ADSENSE_PUBLISHER_ID=
-RUN SITE_URL="$SITE_URL" ADSENSE_CLIENT="$ADSENSE_CLIENT" ADSENSE_PUBLISHER_ID="$ADSENSE_PUBLISHER_ID" npm run build
+RUN SITE_URL="$SITE_URL" npm run build
 
 FROM caddy:2.10.2-alpine
 COPY Caddyfile /etc/caddy/Caddyfile

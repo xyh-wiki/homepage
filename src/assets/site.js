@@ -23,7 +23,7 @@
       if (show) visible += 1;
     });
 
-    if (summary) summary.textContent = `显示 ${visible} 项服务`;
+    if (summary) summary.textContent = `显示 ${visible} 个项目`;
     if (empty) empty.hidden = visible !== 0;
   }
 

@@ -1,0 +1,44 @@
+{
+  "categories": [
+    {
+      "id": "media",
+      "label": "媒体工具",
+      "filterLabel": "媒体"
+    },
+    {
+      "id": "writing",
+      "label": "文本工具",
+      "filterLabel": "文本"
+    },
+    {
+      "id": "developer",
+      "label": "开发者",
+      "filterLabel": "开发者"
+    },
+    {
+      "id": "personal",
+      "label": "个人应用",
+      "filterLabel": "个人"
+    }
+  ],
+  "availability": {
+    "public": {
+      "label": "公开访问",
+      "listLabel": "",
+      "indexable": true,
+      "boundary": "该入口无需登录即可访问。处理文件或提交内容前，请先阅读目标项目的隐私与使用说明。"
+    },
+    "public-demo": {
+      "label": "公开演示",
+      "listLabel": "演示",
+      "indexable": true,
+      "boundary": "该入口用于功能演示。请勿提交秘密、个人信息、客户资料或生产环境文档，并结合来源核对输出结果。"
+    },
+    "private": {
+      "label": "需要登录",
+      "listLabel": "需要登录",
+      "indexable": false,
+      "boundary": "该入口需要账户或持有者授权。本站只提供项目介绍和访问入口，不展示登录后的内容。"
+    }
+  }
+}

@@ -4,7 +4,7 @@
   </nav>
   <article class="service-detail">
     <header>
-      <p class="eyebrow">{{CATEGORY_LABEL}} · {{AVAILABILITY_LABEL}}</p>
+      <p class="service-type">{{CATEGORY_LABEL}}{{AVAILABILITY_SUFFIX}}</p>
       <h1>{{SERVICE_NAME}}</h1>
       <p class="service-lead">{{SERVICE_SUMMARY}}</p>
       <div class="service-actions">
@@ -17,22 +17,20 @@
       <ul class="feature-list">{{FEATURE_ITEMS}}</ul>
     </section>
     <section>
-      <h2>访问与数据边界</h2>
+      <h2>使用说明</h2>
       <p>{{BOUNDARY_TEXT}}</p>
-      <dl class="service-facts">
-        <div><dt>访问类型</dt><dd>{{AVAILABILITY_LABEL}}</dd></div>
-        <div><dt>界面语言</dt><dd>{{LANGUAGE}}</dd></div>
-        <div><dt>维护节点</dt><dd>{{HOST_LABEL}}</dd></div>
-        <div><dt>核对日期</dt><dd>2026-08-12</dd></div>
-      </dl>
     </section>
     <section>
       <h2>使用前建议</h2>
       <p>{{GUIDANCE_TEXT}}</p>
     </section>
   </article>
-  <aside class="ad-reserve ad-reserve-detail" aria-label="广告预留区域">
-    <span>广告预留</span>
-    <p>当前没有广告请求。后续只在公开内容页启用，并与主要操作保持明确间距。</p>
+  <aside class="service-aside" aria-label="项目信息">
+    <h2>项目信息</h2>
+    <dl class="service-facts">
+      <div><dt>分类</dt><dd>{{CATEGORY_LABEL}}</dd></div>
+      <div><dt>访问</dt><dd>{{AVAILABILITY_LABEL}}</dd></div>
+      <div><dt>语言</dt><dd>{{LANGUAGE}}</dd></div>
+    </dl>
   </aside>
 </main>

@@ -1,93 +1,43 @@
 <main id="main-content">
   <section class="hero" aria-labelledby="hero-title">
     <div class="hero-copy">
-      <p class="eyebrow">实用工具与独立项目</p>
-      <h1 id="hero-title">找到适合当前任务的服务。</h1>
-      <p class="hero-summary">这里汇集 xyh-dep 与 miles-01 上对外提供的工具、开发者内容和受限个人服务。每个入口都说明用途、访问边界和数据注意事项。</p>
-      <div class="hero-actions">
-        <a class="button button-primary" href="#services">浏览全部服务</a>
-        <a class="button button-secondary" href="/guide/">查看选择指南</a>
-      </div>
+      <h1 id="hero-title">工具与项目</h1>
+      <p class="hero-summary">这里收录我持续维护的在线工具和公开项目。可以按分类浏览，也可以直接搜索名称或用途。</p>
     </div>
-    <aside class="hero-index" aria-label="目录概览">
-      <p class="index-label">当前目录</p>
-      <dl>
-        <div><dt>{{PUBLIC_COUNT}}</dt><dd>公开工具与内容</dd></div>
-        <div><dt>{{PRIVATE_COUNT}}</dt><dd>受限个人服务</dd></div>
-        <div><dt>{{HOST_COUNT}}</dt><dd>运行节点</dd></div>
-      </dl>
-      <p>目录展示经过人工核对的正式入口，不公开内部端口、密钥或管理状态。</p>
-    </aside>
   </section>
 
   <section class="finder" id="services" aria-labelledby="services-title">
     <div class="section-heading">
-      <div>
-        <p class="eyebrow">服务目录</p>
-        <h2 id="services-title">按任务筛选</h2>
-      </div>
-      <p>搜索在本地浏览器完成，不会发送输入内容。</p>
+      <h2 id="services-title">全部项目</h2>
+      <p>{{SERVICE_COUNT}} 个入口</p>
     </div>
     <div class="finder-toolbar">
       <label class="search-field">
-        <span>搜索服务</span>
-        <input id="service-search" type="search" placeholder="例如：音频、文本、GitHub" autocomplete="off">
+        <span class="visually-hidden">搜索项目</span>
+        <input id="service-search" type="search" placeholder="搜索名称或用途" autocomplete="off">
       </label>
       <div class="filters" role="group" aria-label="服务分类">
         <button type="button" class="filter is-active" data-filter="all">全部</button>
-        <button type="button" class="filter" data-filter="media">媒体创作</button>
-        <button type="button" class="filter" data-filter="writing">文本处理</button>
-        <button type="button" class="filter" data-filter="developer">开发者</button>
-        <button type="button" class="filter" data-filter="personal">个人服务</button>
+        {{CATEGORY_FILTERS}}
       </div>
     </div>
-    <p id="service-results" class="results-summary" aria-live="polite">显示 {{SERVICE_COUNT}} 项服务</p>
+    <p id="service-results" class="results-summary" aria-live="polite">显示 {{SERVICE_COUNT}} 个项目</p>
     <div class="service-list" data-service-list>
       {{SERVICE_ROWS}}
     </div>
     <div class="empty-results" hidden data-empty-results>
-      <h3>没有匹配的服务</h3>
+      <h3>没有匹配的项目</h3>
       <p>清除搜索词或选择“全部”后再试。</p>
     </div>
   </section>
 
-  <section class="editorial-split" aria-labelledby="principles-title">
-    <div>
-      <p class="eyebrow">选择前先确认</p>
-      <h2 id="principles-title">访问边界比入口数量更重要</h2>
-    </div>
-    <div class="principle-list">
-      <article>
-        <h3>本地处理</h3>
-        <p>Audio Convert 等浏览器工具可以在设备内完成主要处理。仍应保留原文件，并根据设备性能控制文件大小。</p>
-      </article>
-      <article>
-        <h3>公开演示</h3>
-        <p>文档问答和生成式能力用于体验工作流，不应提交秘密、个人信息或生产材料，也不应把模型输出直接当作事实。</p>
-      </article>
-      <article>
-        <h3>受限工作区</h3>
-        <p>笔记和内容发布服务需要账户或持有者授权。目录只提供入口，不公开登录后的数据和运维信息。</p>
-      </article>
-    </div>
-  </section>
-
-  <aside class="ad-reserve" aria-label="广告预留区域">
-    <span>广告预留</span>
-    <p>当前未启用广告。审核与同意管理完成后，此处可加载不遮挡正文的展示广告。</p>
-  </aside>
-
-  <section class="reading" aria-labelledby="reading-title">
-    <div class="section-heading">
-      <div>
-        <p class="eyebrow">继续阅读</p>
-        <h2 id="reading-title">了解目录如何维护</h2>
-      </div>
-    </div>
-    <div class="reading-list">
-      <a href="/guide/"><span>01</span><strong>如何选择合适的工具</strong><small>按媒体、文本、开源阅读和受限服务理解使用场景。</small></a>
-      <a href="/about/"><span>02</span><strong>关于这个站点</strong><small>了解内容来源、收录原则和更新方式。</small></a>
-      <a href="/privacy/"><span>03</span><strong>隐私与广告计划</strong><small>查看当前数据处理事实和后续 AdSense 启用条件。</small></a>
-    </div>
+  <section class="notes" aria-labelledby="notes-title">
+    <h2 id="notes-title">使用前请确认</h2>
+    <dl class="notes-list">
+      <div><dt>文件与隐私</dt><dd>处理个人资料或重要文件前，先阅读目标工具的说明，并保留原始文件。</dd></div>
+      <div><dt>结果核对</dt><dd>自动生成的摘要、内容或处理结果可能不完整，正式使用前请自行检查。</dd></div>
+      <div><dt>登录入口</dt><dd>标记为“需要登录”的项目仅供已获授权的用户使用。</dd></div>
+    </dl>
+    <p class="notes-more">不确定如何选择？查看<a href="/guide/">使用说明</a>。</p>
   </section>
 </main>

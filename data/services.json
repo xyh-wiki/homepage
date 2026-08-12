@@ -10,7 +10,8 @@
     "features": ["音频与视频格式转换", "批量队列与统一输出设置", "本地处理，不上传媒体文件"],
     "keywords": ["音频", "视频", "转换", "MP3", "WAV", "MP4"],
     "featured": true,
-    "language": "中文界面"
+    "language": "中文界面",
+    "guidance": "转换前保留原始文件。大文件会占用浏览器内存和设备算力，建议先用较小样本确认格式和质量设置。"
   },
   {
     "slug": "sonora-studio",
@@ -19,11 +20,12 @@
     "category": "media",
     "availability": "public",
     "host": "miles-01",
-    "summary": "从歌曲蓝图、歌词到音频版本的 AI 音乐创作工作区，支持中文、英文和日文。",
-    "features": ["歌曲蓝图与歌词编辑", "真实音乐生成任务与版本试听", "多语言公开说明与创作入口"],
+    "summary": "从歌曲构思、歌词到音乐版本的创作工作区，支持中文、英文和日文。",
+    "features": ["歌曲结构与歌词编辑", "音乐生成任务与版本试听", "多语言说明与创作入口"],
     "keywords": ["音乐", "AI", "歌词", "歌曲", "生成"],
     "featured": true,
-    "language": "中文 / English / 日本語"
+    "language": "中文 / English / 日本語",
+    "guidance": "音乐生成结果可能存在差异。公开发布前请检查歌词、音频内容、版权来源、供应商条款和目标平台规则。"
   },
   {
     "slug": "text-tools",
@@ -36,7 +38,8 @@
     "features": ["文本清理与格式化", "JSON 等常用结构处理", "浏览器内完成常见编辑任务"],
     "keywords": ["文本", "编辑", "JSON", "格式化", "清理"],
     "featured": true,
-    "language": "English"
+    "language": "English",
+    "guidance": "不要把密码、令牌或受保护的客户数据粘贴到尚未确认处理方式的工具中；重要内容应先保留副本。"
   },
   {
     "slug": "github-trending-cn",
@@ -49,7 +52,8 @@
     "features": ["日榜、周榜和月榜", "中文项目摘要", "历史记录与仓库详情"],
     "keywords": ["GitHub", "开源", "趋势", "开发者", "中文"],
     "featured": true,
-    "language": "中文"
+    "language": "中文",
+    "guidance": "趋势和中文摘要适合初步筛选。进行技术选型时，还应检查原仓库的许可证、维护状态、安全公告、依赖和发布记录。"
   },
   {
     "slug": "rag-support-bot",
@@ -62,7 +66,8 @@
     "features": ["文档检索与问答", "回答来源引用", "公开样例知识库"],
     "keywords": ["RAG", "知识库", "问答", "文档", "引用"],
     "featured": false,
-    "language": "English"
+    "language": "English",
+    "guidance": "回答可能不完整或存在理解偏差。请通过页面展示的来源核对结论，不要把演示结果直接用于高风险决策。"
   },
   {
     "slug": "miles-note",
@@ -75,7 +80,8 @@
     "features": ["Markdown 笔记", "私有数据存储", "Web 与 Android 使用入口"],
     "keywords": ["笔记", "Markdown", "私有", "Android"],
     "featured": false,
-    "language": "中文"
+    "language": "中文",
+    "guidance": "只有已获授权的使用者才应登录。账户和笔记内容不会通过本站目录公开。"
   },
   {
     "slug": "content-publisher",
@@ -88,6 +94,7 @@
     "features": ["内容来源与生成任务", "草稿、版本和发布计划", "API 与人工发布流程"],
     "keywords": ["内容", "发布", "写作", "工作流", "私有"],
     "featured": false,
-    "language": "中文"
+    "language": "中文",
+    "guidance": "发布前需要人工核对内容、目标渠道和最终公开链接，不能把自动处理结果视为已经批准的内容。"
   }
 ]
