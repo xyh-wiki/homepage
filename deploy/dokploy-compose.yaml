@@ -1,0 +1,30 @@
+services:
+  homepage:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+      args:
+        SITE_URL: ${SITE_URL:-https://xyh.wiki}
+        ADSENSE_CLIENT: ${ADSENSE_CLIENT:-}
+        ADSENSE_PUBLISHER_ID: ${ADSENSE_PUBLISHER_ID:-}
+    restart: unless-stopped
+    expose:
+      - "3000"
+    networks:
+      - dokploy-network
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+    tmpfs:
+      - /config:size=8m,mode=0700,uid=65532,gid=65532
+      - /data:size=8m,mode=0700,uid=65532,gid=65532
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1:3000/healthz"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+
+networks:
+  dokploy-network:
+    external: true

@@ -1,0 +1,16 @@
+{
+  "name": "xyh-homepage",
+  "version": "1.0.0",
+  "private": true,
+  "description": "xyh.wiki 公开服务目录与内容入口",
+  "license": "UNLICENSED",
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "check": "node --test tests/*.test.mjs",
+    "test": "npm run build && npm run check",
+    "serve": "node scripts/serve.mjs"
+  }
+}

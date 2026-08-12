@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" role="img" aria-labelledby="title desc">
+  <title id="title">xyh.wiki 实用工具与独立项目</title>
+  <desc id="desc">浏览器工具、开发者项目与公开演示的服务目录</desc>
+  <rect width="1200" height="630" fill="#f4f0e6"/>
+  <rect x="0" y="0" width="330" height="630" fill="#18342b"/>
+  <text x="70" y="115" fill="#f4f0e6" font-family="Arial,sans-serif" font-size="58" font-weight="700">xyh.wiki</text>
+  <text x="405" y="205" fill="#d7653b" font-family="Arial,sans-serif" font-size="28" font-weight="700" letter-spacing="4">SERVICE DIRECTORY</text>
+  <text x="405" y="310" fill="#18342b" font-family="Georgia,serif" font-size="78">实用工具与</text>
+  <text x="405" y="400" fill="#18342b" font-family="Georgia,serif" font-size="78">独立项目</text>
+  <line x1="405" y1="455" x2="1080" y2="455" stroke="#cfc8ba" stroke-width="2"/>
+  <text x="405" y="515" fill="#52645d" font-family="Arial,sans-serif" font-size="28">媒体 · 文本 · 开源阅读 · 文档问答</text>
+</svg>

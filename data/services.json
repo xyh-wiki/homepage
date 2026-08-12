@@ -1,0 +1,93 @@
+[
+  {
+    "slug": "audio-convert",
+    "name": "Audio Convert",
+    "url": "https://audio-convert.xyh.wiki/",
+    "category": "media",
+    "availability": "public",
+    "host": "miles-01",
+    "summary": "在浏览器中完成音频与视频格式转换。文件留在本地设备，不需要注册。",
+    "features": ["音频与视频格式转换", "批量队列与统一输出设置", "本地处理，不上传媒体文件"],
+    "keywords": ["音频", "视频", "转换", "MP3", "WAV", "MP4"],
+    "featured": true,
+    "language": "中文界面"
+  },
+  {
+    "slug": "sonora-studio",
+    "name": "Sonora Studio",
+    "url": "https://gen-aimusic.xyh.wiki/",
+    "category": "media",
+    "availability": "public",
+    "host": "miles-01",
+    "summary": "从歌曲蓝图、歌词到音频版本的 AI 音乐创作工作区，支持中文、英文和日文。",
+    "features": ["歌曲蓝图与歌词编辑", "真实音乐生成任务与版本试听", "多语言公开说明与创作入口"],
+    "keywords": ["音乐", "AI", "歌词", "歌曲", "生成"],
+    "featured": true,
+    "language": "中文 / English / 日本語"
+  },
+  {
+    "slug": "text-tools",
+    "name": "EditText Lab",
+    "url": "https://text-tools.xyh.wiki/",
+    "category": "writing",
+    "availability": "public",
+    "host": "miles-01",
+    "summary": "用于格式化、清理、比较和分析文本的在线工具集合。",
+    "features": ["文本清理与格式化", "JSON 等常用结构处理", "浏览器内完成常见编辑任务"],
+    "keywords": ["文本", "编辑", "JSON", "格式化", "清理"],
+    "featured": true,
+    "language": "English"
+  },
+  {
+    "slug": "github-trending-cn",
+    "name": "GitHub 热门项目中文榜",
+    "url": "https://git-trending.xyh.wiki/",
+    "category": "developer",
+    "availability": "public",
+    "host": "xyh-dep",
+    "summary": "追踪 GitHub 日榜、周榜和月榜，并提供中文项目摘要与 README 阅读入口。",
+    "features": ["日榜、周榜和月榜", "中文项目摘要", "历史记录与仓库详情"],
+    "keywords": ["GitHub", "开源", "趋势", "开发者", "中文"],
+    "featured": true,
+    "language": "中文"
+  },
+  {
+    "slug": "rag-support-bot",
+    "name": "Knowledge Base Assistant",
+    "url": "https://bot.xyh.wiki/",
+    "category": "developer",
+    "availability": "public-demo",
+    "host": "xyh-dep",
+    "summary": "面向公开示例知识库的文档问答演示，回答会展示对应来源。",
+    "features": ["文档检索与问答", "回答来源引用", "公开样例知识库"],
+    "keywords": ["RAG", "知识库", "问答", "文档", "引用"],
+    "featured": false,
+    "language": "English"
+  },
+  {
+    "slug": "miles-note",
+    "name": "milesNote",
+    "url": "https://note.xyh.wiki/",
+    "category": "personal",
+    "availability": "private",
+    "host": "xyh-dep",
+    "summary": "个人笔记与本地知识管理应用。服务需要账户或持有者授权，不属于公开内容。",
+    "features": ["Markdown 笔记", "私有数据存储", "Web 与 Android 使用入口"],
+    "keywords": ["笔记", "Markdown", "私有", "Android"],
+    "featured": false,
+    "language": "中文"
+  },
+  {
+    "slug": "content-publisher",
+    "name": "Content Publisher",
+    "url": "https://publisher.xyh.wiki/",
+    "category": "personal",
+    "availability": "private",
+    "host": "miles-01",
+    "summary": "个人技术内容生产与多平台发布工具。登录后管理来源、草稿、版本和发布任务。",
+    "features": ["内容来源与生成任务", "草稿、版本和发布计划", "API 与人工发布流程"],
+    "keywords": ["内容", "发布", "写作", "工作流", "私有"],
+    "featured": false,
+    "language": "中文"
+  }
+]
