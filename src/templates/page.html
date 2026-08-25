@@ -21,6 +21,8 @@
   <meta name="twitter:image" content="{{SITE_URL}}/assets/social-preview.svg?v={{ASSET_VERSION}}">
   <link rel="icon" href="/assets/favicon.svg?v={{ASSET_VERSION}}" type="image/svg+xml">
   <link rel="stylesheet" href="/assets/styles.css?v={{ASSET_VERSION}}">
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8907413334960000"
+    crossorigin="anonymous"></script>
   {{JSON_LD}}
 </head>
 <body data-page="{{PAGE_ID}}">
@@ -32,8 +34,15 @@
     <nav class="primary-nav" aria-label="主要导航">
       <a href="/#services">项目</a>
       <a href="/guide/">使用说明</a>
-      <a href="/about/">关于</a>
-      <a href="/contact/">联系</a>
+      <div class="nav-more">
+        <button class="nav-more-toggle" type="button" aria-expanded="false" aria-controls="nav-more-menu">
+          更多<span aria-hidden="true">⌄</span>
+        </button>
+        <div class="nav-more-menu" id="nav-more-menu" hidden>
+          <a href="/about/">关于</a>
+          <a href="/contact/">联系</a>
+        </div>
+      </div>
     </nav>
   </header>
   {{BODY}}

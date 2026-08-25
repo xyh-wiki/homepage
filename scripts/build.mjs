@@ -16,11 +16,12 @@ const escapeHtml = (value) => String(value)
 
 const [
   siteSource, catalogSource, servicesSource, pageTemplate, homeTemplate, articleTemplate, serviceTemplate,
-  stylesSource, scriptSource, faviconSource, socialPreviewSource
+  stylesSource, scriptSource, faviconSource, socialPreviewSource, adsSource
 ] = await Promise.all([
   load('data/site.json'), load('data/catalog.json'), load('data/services.json'), load('src/templates/page.html'),
   load('src/templates/home.html'), load('src/templates/article.html'), load('src/templates/service.html'),
-  load('src/assets/styles.css'), load('src/assets/site.js'), load('src/assets/favicon.svg'), load('src/assets/social-preview.svg')
+  load('src/assets/styles.css'), load('src/assets/site.js'), load('src/assets/favicon.svg'), load('src/assets/social-preview.svg'),
+  load('data/ads.txt')
 ]);
 
 const site = JSON.parse(siteSource);
@@ -191,6 +192,17 @@ function serviceRow(service) {
   </article>`;
 }
 
+function featuredRow(service) {
+  const category = categories.get(service.category);
+  const access = availability.get(service.availability);
+  return `<a class="featured-row" href="/services/${escapeHtml(service.slug)}/">
+    <span class="featured-name">${escapeHtml(service.name)}</span>
+    <span class="featured-summary">${escapeHtml(service.summary)}</span>
+    <span class="featured-meta">${escapeHtml(category.filterLabel)}${access.listLabel ? ` · ${escapeHtml(access.listLabel)}` : ''}</span>
+    <span class="service-arrow" aria-hidden="true">→</span>
+  </a>`;
+}
+
 async function writeRoute(route, html) {
   const target = route === '/' ? path.join(dist, 'index.html') : path.join(dist, route, 'index.html');
   await mkdir(path.dirname(target), { recursive: true });
@@ -204,8 +216,9 @@ await cp(path.join(root, 'src/assets'), path.join(dist, 'assets'), { recursive: 
 const homeBody = replace(homeTemplate, {
   SERVICE_COUNT: services.length,
   CATEGORY_FILTERS: catalog.categories
-    .map((category) => `<button type="button" class="filter" data-filter="${escapeHtml(category.id)}">${escapeHtml(category.filterLabel)}</button>`)
+    .map((category) => `<button type="button" class="filter" aria-pressed="false" data-filter="${escapeHtml(category.id)}">${escapeHtml(category.filterLabel)}</button>`)
     .join('\n'),
+  FEATURED_ROWS: services.filter((service) => service.featured).map(featuredRow).join('\n'),
   SERVICE_ROWS: services.map(serviceRow).join('\n')
 });
 
@@ -302,6 +315,7 @@ const indexedRoutes = ['/', ...Object.keys(articles).map((slug) => `/${slug}/`),
 const sitemap = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${indexedRoutes.map((route) => `  <url><loc>${escapeHtml(siteUrl + route)}</loc></url>`).join('\n')}\n</urlset>\n`;
 await writeFile(path.join(dist, 'sitemap.xml'), sitemap);
 await writeFile(path.join(dist, 'robots.txt'), `User-agent: *\nAllow: /\n\nSitemap: ${siteUrl}/sitemap.xml\n`);
+await writeFile(path.join(dist, 'ads.txt'), adsSource.trimEnd() + '\n');
 await writeFile(path.join(dist, 'site.webmanifest'), JSON.stringify({
   name: site.siteName, short_name: 'xyh.wiki', start_url: '/', display: 'standalone',
   background_color: '#ffffff', theme_color: '#ffffff', icons: [{ src: '/assets/favicon.svg', sizes: 'any', type: 'image/svg+xml' }]

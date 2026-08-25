@@ -18,6 +18,7 @@ docker build -t xyh-homepage:local .
 docker run --rm -d --name xyh-homepage-local -p 127.0.0.1:4300:3000 xyh-homepage:local
 curl -fsS http://127.0.0.1:4300/healthz
 curl -fsS http://127.0.0.1:4300/robots.txt
+curl -fsS http://127.0.0.1:4300/ads.txt
 curl -fsS -o /dev/null -w '%{http_code}\n' http://127.0.0.1:4300/not-found
 curl -fsSI http://127.0.0.1:4300/advertising/
 docker rm -f xyh-homepage-local
@@ -29,6 +30,8 @@ docker rm -f xyh-homepage-local
 - 未知路径返回 404；
 - `/advertising/` 永久跳转到 `/privacy/`；
 - 公开 HTML 不包含内部主机或未启用的规划。
+- 页面包含 `ca-pub-8907413334960000` 对应的异步 AdSense 加载脚本。
+- `/ads.txt` 返回 `google.com, pub-8907413334960000, DIRECT, f08c47fec0942fa0`。
 
 ## 3. 发布前门禁
 
@@ -71,6 +74,7 @@ DNS 和 TLS 已完成配置。更换源站或路由时：
 curl -fsSI https://xyh.wiki/
 curl -fsS https://xyh.wiki/healthz
 curl -fsS https://xyh.wiki/robots.txt
+curl -fsS https://xyh.wiki/ads.txt
 curl -fsS https://xyh.wiki/sitemap.xml
 curl -fsSI https://xyh.wiki/services/audio-convert/
 curl -fsSI https://xyh.wiki/advertising/
@@ -87,6 +91,9 @@ curl -fsSI https://xyh.wiki/does-not-exist
 - HTML 中 title、description、canonical、robots、H1、正文和 JSON-LD 正确。
 - 非公开项目页为 `noindex`，并从 Sitemap 排除。
 - 公开 HTML 不含内部主机、端口和未启用规划。
+- 响应 CSP 允许 AdSense 的 HTTPS 脚本、连接、图片和广告框架，浏览器控制台无相关 CSP 拦截。
+- 根路径 `/ads.txt` 返回 200，并且内容与 AdSense 后台提供的授权行完全一致。
+- 广告未通过审核、未配置自动广告、需要地区同意或暂无库存时可能不展示；不能仅以页面没有广告判断部署失败。
 
 ## 7. 添加项目
 

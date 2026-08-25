@@ -30,6 +30,38 @@ test('catalog navigation is generated from category data', async () => {
   assert.match(home, /\/assets\/site\.js\?v=[a-f0-9]{12}/);
 });
 
+test('homepage UI includes featured entries and accessible filtering controls', async () => {
+  const home = await read('index.html');
+  const featured = services.filter((item) => item.featured);
+  assert.equal(one(home, /class="featured-row"/g), featured.length);
+  assert.match(home, /class="nav-more-toggle"[^>]+aria-expanded="false"/);
+  assert.match(home, /id="nav-more-menu"[^>]+hidden/);
+  assert.match(home, /class="search-clear"[^>]+hidden/);
+  assert.equal(one(home, /aria-pressed="true"/g), 1);
+  assert.equal(one(home, /aria-pressed="false"/g), catalog.categories.length);
+});
+
+test('all generated pages include the configured AdSense loader once', async () => {
+  const htmlFiles = [];
+  async function collect(directory) {
+    for (const entry of await readdir(directory, { withFileTypes: true })) {
+      const target = path.join(directory, entry.name);
+      if (entry.isDirectory()) await collect(target);
+      else if (entry.name.endsWith('.html')) htmlFiles.push(target);
+    }
+  }
+  await collect(dist);
+  for (const file of htmlFiles) {
+    const html = await readFile(file, 'utf8');
+    assert.equal(
+      one(html, /https:\/\/pagead2\.googlesyndication\.com\/pagead\/js\/adsbygoogle\.js\?client=ca-pub-8907413334960000/g),
+      1,
+      `${path.relative(dist, file)} must include one AdSense loader`
+    );
+    assert.match(html, /crossorigin="anonymous"/);
+  }
+});
+
 test('indexable pages have unique metadata, canonical, one h1 and visible body', async () => {
   const routes = ['index.html', ...articles.map((slug) => `${slug}/index.html`), ...services.filter((item) => catalog.availability[item.availability].indexable).map((item) => `services/${item.slug}/index.html`)];
   const titles = new Set();
@@ -81,10 +113,8 @@ test('public output contains no deployment details or unpublished business plans
   const forbidden = [
     /xyh-dep/i,
     /miles-01/i,
-    /AdSense/i,
     /广告预留/,
     /ADSENSE_/,
-    /pagead2\.googlesyndication\.com/,
     /publisher ID/i,
     /运行节点/,
     /维护节点/,
@@ -97,7 +127,7 @@ test('public output contains no deployment details or unpublished business plans
       assert.ok(!html.includes(host), `${path.relative(dist, file)} must not expose deployment host ${host}`);
     }
   }
-  await assert.rejects(stat(path.join(dist, 'ads.txt')));
+  assert.equal(await read('ads.txt'), 'google.com, pub-8907413334960000, DIRECT, f08c47fec0942fa0\n');
   await assert.rejects(stat(path.join(dist, 'ads.txt.example')));
   await assert.rejects(stat(path.join(dist, 'advertising')));
 });

@@ -1,7 +1,7 @@
 # 技术设计
 
 - 版本：1.1
-- 日期：2026-08-12
+- 日期：2026-08-25
 
 ## 1. 目标与约束
 
@@ -14,7 +14,7 @@
 | 组件 | 版本/来源 | 用途 | 选择理由 |
 |---|---|---|---|
 | Node.js | 22，Docker 官方 Alpine 镜像 | 构建脚本与本地预览 | 原生 API 足够，无第三方依赖 |
-| HTML/CSS/JS | 浏览器原生 | 页面、样式、搜索筛选 | 包体小，禁用 JS 仍可阅读 |
+| HTML/CSS/JS | 浏览器原生 | 页面、样式、搜索筛选和 AdSense 加载 | 核心页面包体小，广告异步加载，禁用 JS 仍可阅读 |
 | Caddy | 2.10.2-alpine | 生产静态服务与健康检查 | 配置简洁，支持安全响应头和真实 404 |
 | Node test runner | Node 22 内置 | 构建产物和数据边界测试 | 无新增测试依赖 |
 | Docker/Dokploy/Traefik | 现有部署平台 | 构建、运行、TLS 与路由 | 不占用宿主机 80/443 |
@@ -25,6 +25,7 @@
 
 ```text
 data/site.json              站点名称、地址和描述
+data/ads.txt                根域名广告授权声明
 data/catalog.json           分类与访问类型
 data/services.json          项目事实、搜索信息和使用建议
 src/content/*.md            指南、政策和说明正文
@@ -84,7 +85,8 @@ deploy/dokploy-compose.yaml Dokploy Compose 模板
 5. 根据访问类型的 `indexable` 配置决定 robots 与 Sitemap。
 6. 生成 canonical、Open Graph、Twitter Card、JSON-LD、robots、Sitemap 和 Manifest。
 7. 根据 CSS、JavaScript 和 SVG 内容生成短哈希版本参数，避免发布后继续使用旧缓存。
-8. 复制本地静态资源到 `dist`。
+8. 生成根路径 `ads.txt`，供广告平台抓取授权关系。
+9. 复制本地静态资源到 `dist`。
 
 构建失败直接退出，不跳过错误记录。
 
@@ -94,7 +96,7 @@ deploy/dokploy-compose.yaml Dokploy Compose 模板
 - HTML 输出和 JSON-LD 对危险字符进行转义。
 - `host` 字段仅用于内部维护，渲染函数不读取该字段。
 - 回归测试扫描全部生成 HTML，禁止内部主机名、运行节点、维护节点、维护日期和未启用业务规划进入公开页面。
-- Caddy CSP 仅允许本站脚本、样式、图片和连接，不为尚未启用的第三方脚本预开放域名。
+- Caddy CSP 允许本站资源和 AdSense 所需的 Google 脚本、连接、图片与框架域名；未为广告开放 `unsafe-inline` 或 `unsafe-eval`，核心页面不依赖广告脚本。
 - 容器使用 UID/GID 65532、只读根文件系统和 `no-new-privileges`。
 
 ## 7. SEO
@@ -109,11 +111,12 @@ deploy/dokploy-compose.yaml Dokploy Compose 模板
 
 ## 8. 性能与可访问性
 
-- 不加载远程字体、框架运行时和首屏图片。
+- 不加载远程字体、前端框架运行时和首屏图片；Google AdSense 作为异步第三方脚本加载。
 - CSS/JavaScript 使用内容哈希查询参数和长期缓存，HTML 使用 no-cache。
 - 搜索仅遍历当前页面项目行。
 - 保留跳过链接、语义结构、可见焦点和减少动态效果支持。
-- 桌面和移动端均使用连续列表，避免横向滚动。
+- 首页精选项目与完整目录均使用连续列表；分类筛选在小屏横向滚动，避免多行控件挤压内容。
+- 原生 JavaScript 提供“更多”导航菜单、`/` 搜索快捷键、搜索清除、空结果清除和 `aria-pressed` 状态同步。
 
 ## 9. 测试映射
 
@@ -126,6 +129,9 @@ deploy/dokploy-compose.yaml Dokploy Compose 模板
 | 目标 URL 不安全 | HTTPS、目标域、无显式端口 |
 | 内部或规划信息泄露 | 扫描所有生成 HTML 的禁止词 |
 | 根域配置错误 | robots 与 Sitemap 使用正式域名 |
+| 首页交互不可访问 | 检查精选项目数量、导航菜单状态、搜索清除按钮和筛选 `aria-pressed` |
+| 广告脚本漏装或重复 | 扫描全部生成 HTML，确认每页仅加载一次指定 AdSense 客户端脚本 |
+| 广告授权文件缺失或内容错误 | 检查 `/ads.txt` 生成路径、精确内容和 HTTP 200 |
 
 ## 10. 部署与回滚
 

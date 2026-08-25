@@ -14,8 +14,11 @@ xyh.wiki 的正式公共首页，用于集中展示持续维护的在线工具�
 - 无 npm 第三方依赖的 Node.js 22 构建与测试。
 - 非 root Caddy 容器和 Dokploy Compose 模板。
 - 静态资源内容哈希版本参数，发布新样式时不会继续命中旧浏览器缓存。
+- 首页精选项目入口、键盘 `/` 搜索快捷键、可清除搜索和可访问分类筛选。
+- 全站加载 Google AdSense 脚本；实际广告展示取决于 AdSense 后台配置、审核和地区同意要求。
+- 根域名生成 `ads.txt`，声明当前 AdSense 发布商授权关系。
 
-公开页面不会显示内部主机名、端口、部署信息、未启用功能或商业计划。
+公开页面不会显示内部主机名、端口、部署信息或未启用功能。
 
 ## 技术栈
 
@@ -33,6 +36,7 @@ xyh.wiki 的正式公共首页，用于集中展示持续维护的在线工具�
 data/catalog.json       分类与访问类型配置
 data/services.json      项目清单与公开说明
 data/site.json          站点级配置
+data/ads.txt             根域名广告授权声明
 src/content/            指南和政策正文
 src/templates/          页面模板
 src/assets/             CSS、JavaScript 和 SVG
@@ -58,6 +62,8 @@ npm run serve
 ```bash
 npm run test
 ```
+
+前端验收还应检查桌面端和 360–430px 移动端的首屏、精选项目、项目列表、导航“更多”菜单、搜索清除和分类横向滚动。
 
 ## 添加项目
 
@@ -115,6 +121,8 @@ curl -fsS http://127.0.0.1:4300/healthz
 本项目是公开网站，SEO 直接适用。当前实现包括初始 HTML 正文、稳定 URL、唯一元数据、canonical、内部链接、结构化数据、robots、Sitemap、非公开页 `noindex`、真实 404 和移动端布局。
 
 新增服务时，公开项目会自动加入 Sitemap；标记为不可索引的访问类型会自动排除。
+
+广告发布商授权文件由 `data/ads.txt` 生成到根路径 `/ads.txt`。若 AdSense 后台的授权信息发生变化，必须以后台提供的完整内容更新该文件。
 
 ## 文档
 

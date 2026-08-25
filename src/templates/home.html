@@ -1,23 +1,43 @@
 <main id="main-content">
   <section class="hero" aria-labelledby="hero-title">
     <div class="hero-copy">
+      <p class="eyebrow">xyh.wiki / directory</p>
       <h1 id="hero-title">工具与项目</h1>
       <p class="hero-summary">这里收录我持续维护的在线工具和公开项目。可以按分类浏览，也可以直接搜索名称或用途。</p>
+      <a class="hero-link" href="#services">浏览全部项目<span aria-hidden="true">↓</span></a>
     </div>
   </section>
 
   <section class="finder" id="services" aria-labelledby="services-title">
+    <div class="featured" aria-labelledby="featured-title">
+      <div class="section-heading section-heading-quiet">
+        <div>
+          <p class="eyebrow">从这里开始</p>
+          <h2 id="featured-title">精选项目</h2>
+        </div>
+        <p>优先展示的入口</p>
+      </div>
+      <div class="featured-list">
+        {{FEATURED_ROWS}}
+      </div>
+    </div>
+
     <div class="section-heading">
-      <h2 id="services-title">全部项目</h2>
-      <p>{{SERVICE_COUNT}} 个入口</p>
+      <div>
+        <p class="eyebrow">完整目录</p>
+        <h2 id="services-title">全部项目</h2>
+      </div>
+      <p><span data-total-count>{{SERVICE_COUNT}}</span> 个入口</p>
     </div>
     <div class="finder-toolbar">
       <label class="search-field">
         <span class="visually-hidden">搜索项目</span>
-        <input id="service-search" type="search" placeholder="搜索名称或用途" autocomplete="off">
+        <span class="search-icon" aria-hidden="true">⌕</span>
+        <input id="service-search" type="search" placeholder="搜索名称或用途" autocomplete="off" enterkeyhint="search">
+        <button class="search-clear" type="button" aria-label="清除搜索" hidden>×</button>
       </label>
       <div class="filters" role="group" aria-label="服务分类">
-        <button type="button" class="filter is-active" data-filter="all">全部</button>
+        <button type="button" class="filter is-active" aria-pressed="true" data-filter="all">全部</button>
         {{CATEGORY_FILTERS}}
       </div>
     </div>
@@ -28,6 +48,7 @@
     <div class="empty-results" hidden data-empty-results>
       <h3>没有匹配的项目</h3>
       <p>清除搜索词或选择“全部”后再试。</p>
+      <button class="button button-secondary empty-clear" type="button" data-clear-results>清除筛选</button>
     </div>
   </section>
 
