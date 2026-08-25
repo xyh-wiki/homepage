@@ -28,6 +28,34 @@
     "guidance": "音乐生成结果可能存在差异。公开发布前请检查歌词、音频内容、版权来源、供应商条款和目标平台规则。"
   },
   {
+    "slug": "tiktok-download",
+    "name": "TikTok Download Helper",
+    "url": "https://tiktok-download.xyh.wiki/",
+    "category": "media",
+    "availability": "public",
+    "host": "miles-01",
+    "summary": "清理 TikTok 分享链接、预览元数据并提供安全下载指引的在线辅助工具。",
+    "features": ["TikTok 分享链接清理", "视频元数据预览", "使用自有直链的下载指引"],
+    "keywords": ["TikTok", "视频", "下载", "链接", "元数据"],
+    "featured": false,
+    "language": "English",
+    "guidance": "该工具主要清理链接、预览元数据并提供手动操作指引，不保证自动下载。仅处理你有权访问和保存的内容，并遵守 TikTok 及相关内容的版权、隐私和平台规则。"
+  },
+  {
+    "slug": "soundloadmate",
+    "name": "Soundloadmate",
+    "url": "https://soundloadmate.xyh.wiki/",
+    "category": "media",
+    "availability": "public",
+    "host": "miles-01",
+    "summary": "在浏览器中私密地裁剪、合并、规范化并导出音频，无需上传文件。",
+    "features": ["音频裁剪与合并", "音量规范化处理", "本地导出常用音频格式"],
+    "keywords": ["音频", "裁剪", "合并", "规范化", "导出"],
+    "featured": false,
+    "language": "English",
+    "guidance": "音频处理在浏览器中进行，大文件可能占用较多内存和设备算力。导出或公开使用前请确认内容版权及目标平台要求。"
+  },
+  {
     "slug": "text-tools",
     "name": "EditText Lab",
     "url": "https://text-tools.xyh.wiki/",
