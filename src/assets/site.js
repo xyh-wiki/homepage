@@ -1,4 +1,12 @@
 (() => {
+  document.querySelectorAll('[data-privacy-settings]').forEach((link) => {
+    link.addEventListener('click', (event) => {
+      if (!window.googlefc?.showRevocationMessage) return;
+      event.preventDefault();
+      window.googlefc.showRevocationMessage();
+    });
+  });
+
   const navToggle = document.querySelector('.nav-more-toggle');
   const navMenu = document.querySelector('#nav-more-menu');
 

@@ -96,7 +96,7 @@ deploy/dokploy-compose.yaml Dokploy Compose 模板
 - HTML 输出和 JSON-LD 对危险字符进行转义。
 - `host` 字段仅用于内部维护，渲染函数不读取该字段。
 - 回归测试扫描全部生成 HTML，禁止内部主机名、运行节点、维护节点、维护日期和未启用业务规划进入公开页面。
-- Caddy CSP 允许本站资源和 AdSense 所需的 Google 脚本、连接、图片与框架域名；未为广告开放 `unsafe-inline` 或 `unsafe-eval`，核心页面不依赖广告脚本。
+- Caddy CSP 允许本站资源、AdSense 和 Google Privacy & Messaging 所需的 Google 脚本、连接、图片与框架域名；未为广告开放 `unsafe-inline` 或 `unsafe-eval`，核心页面不依赖广告脚本。
 - 容器使用 UID/GID 65532、只读根文件系统和 `no-new-privileges`。
 
 ## 7. SEO
@@ -107,6 +107,7 @@ deploy/dokploy-compose.yaml Dokploy Compose 模板
 - 项目页输出与可见内容一致的 `WebPage` 和 `WebApplication`。
 - Sitemap 仅包含允许索引的项目；其他项目页使用 `noindex,follow`。
 - `/advertising/` 旧地址由 Caddy 永久跳转至 `/privacy/`，避免保留已经删除的公开规划页面。
+- 404 页面使用同一页面外壳但显式关闭 AdSense，避免在无内容错误页投放广告。
 - 不输出 meta keywords、评分、用户数、伪发布日期或不可验证指标。
 
 ## 8. 性能与可访问性
@@ -132,6 +133,7 @@ deploy/dokploy-compose.yaml Dokploy Compose 模板
 | 首页交互不可访问 | 检查精选项目数量、导航菜单状态、搜索清除按钮和筛选 `aria-pressed` |
 | 广告脚本漏装或重复 | 扫描全部生成 HTML，确认每页仅加载一次指定 AdSense 客户端脚本 |
 | 广告授权文件缺失或内容错误 | 检查 `/ads.txt` 生成路径、精确内容和 HTTP 200 |
+| 错误页投放广告 | 检查 `404.html` 不包含 AdSense loader |
 
 ## 10. 部署与回滚
 

@@ -32,6 +32,7 @@ docker rm -f xyh-homepage-local
 - 公开 HTML 不包含内部主机或未启用的规划。
 - 页面包含 `ca-pub-8907413334960000` 对应的异步 AdSense 加载脚本。
 - `/ads.txt` 返回 `google.com, pub-8907413334960000, DIRECT, f08c47fec0942fa0`。
+- `/404.html` 不包含 AdSense loader。
 
 ## 3. 发布前门禁
 
@@ -93,7 +94,9 @@ curl -fsSI https://xyh.wiki/does-not-exist
 - 公开 HTML 不含内部主机、端口和未启用规划。
 - 响应 CSP 允许 AdSense 的 HTTPS 脚本、连接、图片和广告框架，浏览器控制台无相关 CSP 拦截。
 - 根路径 `/ads.txt` 返回 200，并且内容与 AdSense 后台提供的授权行完全一致。
+- `/404.html` 不发起广告脚本加载；隐私页包含 Google Ads Settings 和 YourAdChoices 入口。
 - 广告未通过审核、未配置自动广告、需要地区同意或暂无库存时可能不展示；不能仅以页面没有广告判断部署失败。
+- 如果面向 EEA、英国或瑞士投放广告，必须在 AdSense 后台发布 Google Privacy & Messaging 或接入 Google 认证 CMP；仓库代码不能替代账户侧发布。
 
 ## 7. 添加项目
 

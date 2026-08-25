@@ -160,7 +160,7 @@ function jsonLd(value) {
   return `<script type="application/ld+json">${JSON.stringify(value).replaceAll('<', '\\u003c')}</script>`;
 }
 
-function shell({ title, description, route, body, pageId, robots = 'index,follow', structuredData = [] }) {
+function shell({ title, description, route, body, pageId, robots = 'index,follow', structuredData = [], includeAds = true }) {
   const canonical = `${siteUrl}${route === '/' ? '/' : route}`;
   return replace(pageTemplate, {
     TITLE: escapeHtml(title),
@@ -169,6 +169,8 @@ function shell({ title, description, route, body, pageId, robots = 'index,follow
     CANONICAL: escapeHtml(canonical),
     SITE_URL: escapeHtml(siteUrl),
     ASSET_VERSION: assetVersion,
+    ADSENSE_SCRIPT: includeAds ? `<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8907413334960000"
+    crossorigin="anonymous"></script>` : '',
     JSON_LD: structuredData.map(jsonLd).join('\n'),
     PAGE_ID: escapeHtml(pageId),
     BODY: body
@@ -308,7 +310,7 @@ const notFoundBody = replace(articleTemplate, {
 await writeFile(path.join(dist, '404.html'), shell({
   title: `页面不存在｜${site.siteName}`,
   description: '请求的页面不存在，请返回 xyh.wiki 首页浏览服务目录。',
-  route: '/404.html', pageId: 'not-found', robots: 'noindex,follow', body: notFoundBody
+  route: '/404.html', pageId: 'not-found', robots: 'noindex,follow', body: notFoundBody, includeAds: false
 }));
 
 const indexedRoutes = ['/', ...Object.keys(articles).map((slug) => `/${slug}/`), ...services.filter((item) => availability.get(item.availability).indexable).map((item) => `/services/${item.slug}/`)];

@@ -39,9 +39,10 @@ test('homepage UI includes featured entries and accessible filtering controls', 
   assert.match(home, /class="search-clear"[^>]+hidden/);
   assert.equal(one(home, /aria-pressed="true"/g), 1);
   assert.equal(one(home, /aria-pressed="false"/g), catalog.categories.length);
+  assert.match(home, /data-privacy-settings/);
 });
 
-test('all generated pages include the configured AdSense loader once', async () => {
+test('ad-enabled generated pages include the configured AdSense loader once', async () => {
   const htmlFiles = [];
   async function collect(directory) {
     for (const entry of await readdir(directory, { withFileTypes: true })) {
@@ -51,7 +52,7 @@ test('all generated pages include the configured AdSense loader once', async () 
     }
   }
   await collect(dist);
-  for (const file of htmlFiles) {
+  for (const file of htmlFiles.filter((file) => !file.endsWith('/404.html'))) {
     const html = await readFile(file, 'utf8');
     assert.equal(
       one(html, /https:\/\/pagead2\.googlesyndication\.com\/pagead\/js\/adsbygoogle\.js\?client=ca-pub-8907413334960000/g),
@@ -60,6 +61,7 @@ test('all generated pages include the configured AdSense loader once', async () 
     );
     assert.match(html, /crossorigin="anonymous"/);
   }
+  assert.doesNotMatch(await read('404.html'), /adsbygoogle\.js/);
 });
 
 test('indexable pages have unique metadata, canonical, one h1 and visible body', async () => {

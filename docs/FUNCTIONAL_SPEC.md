@@ -107,7 +107,8 @@ xyh.wiki Homepage 是公开的在线工具与项目目录。访客无需了解�
 ## 5. 页面状态
 
 - 加载：静态 HTML 立即显示，不展示伪进度。
-- 广告脚本：页面异步加载 Google AdSense；脚本或广告请求失败不得阻断项目目录、导航和正文。
+- 广告脚本：可投放页面异步加载 Google AdSense；404 页面不加载广告脚本，脚本或广告请求失败不得阻断项目目录、导航和正文。
+- 隐私政策提供 Google 广告设置和 YourAdChoices 入口；EEA、英国和瑞士的同意收集由 AdSense 后台的 Google Privacy & Messaging 或认证 CMP 配置负责。
 - 空结果：说明没有匹配项，建议清除搜索或选择全部。
 - 404：返回真实 404 状态并 `noindex`。
 - JavaScript 禁用：筛选不可用，但所有项目和链接仍然可见。
