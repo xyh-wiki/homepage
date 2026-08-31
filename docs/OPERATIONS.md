@@ -30,7 +30,7 @@ docker rm -f xyh-homepage-local
 - 未知路径返回 404；
 - `/advertising/` 永久跳转到 `/privacy/`；
 - 公开 HTML 不包含内部主机或未启用的规划。
-- 页面包含 `ca-pub-8907413334960000` 对应的异步 AdSense 加载脚本。
+- 只有原创实践指南包含 `ca-pub-8907413334960000` 对应的异步 AdSense 加载脚本；首页、工具参考页和政策页不包含。
 - `/ads.txt` 返回 `google.com, pub-8907413334960000, DIRECT, f08c47fec0942fa0`。
 - `/404.html` 不包含 AdSense loader。
 
@@ -39,7 +39,7 @@ docker rm -f xyh-homepage-local
 1. 确认 Git 工作区只包含本项目变更。
 2. 运行 `npm run test`、`git diff --check`、Node 语法检查和 JSON 校验。
 3. 运行 Docker 构建、容器健康检查和关键路径 HTTP 检查。
-4. 检查桌面与移动端布局、搜索、筛选、键盘焦点和横向溢出。
+4. 检查桌面与移动端布局、文章截图、键盘焦点和横向溢出。
 5. 确认 `SITE_URL=https://xyh.wiki`。
 6. 确认联系邮箱真实可用。
 7. 记录当前线上 Git 提交或部署版本作为回滚目标。
@@ -87,10 +87,10 @@ curl -fsSI https://xyh.wiki/does-not-exist
 - 首页和政策页返回 200，未知页返回 404。
 - 旧 `/advertising/` 地址永久跳转到 `/privacy/`。
 - 容器以非 root 用户运行、健康、无宿主机 published port。
-- 首页搜索和所有分类筛选正常。
+- 首页指南入口、文章截图和外部工具链接正常。
 - 桌面和 360–430px 移动端无横向裁切。
 - HTML 中 title、description、canonical、robots、H1、正文和 JSON-LD 正确。
-- 非公开项目页为 `noindex`，并从 Sitemap 排除。
+- 工具参考页统一为 `noindex,follow`，并从 Sitemap 排除；原创实践指南进入 Sitemap。
 - 公开 HTML 不含内部主机、端口和未启用规划。
 - 响应 CSP 允许 AdSense 的 HTTPS 脚本、连接、图片和广告框架，浏览器控制台无相关 CSP 拦截。
 - 根路径 `/ads.txt` 返回 200，并且内容与 AdSense 后台提供的授权行完全一致。
@@ -101,10 +101,10 @@ curl -fsSI https://xyh.wiki/does-not-exist
 ## 7. 添加项目
 
 1. 在 `data/services.json` 增加项目记录。
-2. 如需新分类或访问类型，编辑 `data/catalog.json`。
+2. 如需更新工具参考页分类或访问类型，编辑 `data/catalog.json`。
 3. 同步受影响的使用说明或项目文档。
 4. 运行 `npm run test`。
-5. 本地检查首页项目数量、筛选项、详情页、Sitemap 和索引状态。
+5. 本地检查指南入口、文章页、截图资源、Sitemap 和索引状态。
 6. 完成评审后再提交和发布。
 
 构建器会阻止重复 slug、名称、URL、未知分类、未知访问类型、字段缺失和不安全 URL。
@@ -118,7 +118,7 @@ curl -fsSI https://xyh.wiki/does-not-exist
 - 健康检查失败；
 - 首页或政策页不可用；
 - TLS 错误；
-- 搜索、导航或布局严重阻断；
+- 文章导航、截图、外部工具链接或布局严重阻断；
 - Sitemap、canonical 或索引策略错误；
 - 公开页面泄露内部信息。
 
@@ -129,6 +129,6 @@ curl -fsSI https://xyh.wiki/does-not-exist
 - 404 异常：检查 Caddy `try_files` 和生成目录。
 - canonical 错误：检查 `SITE_URL`，重新构建。
 - 项目遗漏：检查 `data/services.json` 是否通过构建校验。
-- 分类未显示：检查 `data/catalog.json` 的分类 ID 和标签。
+- 工具参考页分类未显示：检查 `data/catalog.json` 的分类 ID 和标签。
 - 构建提示模板变量未解析：检查模板占位符和 `scripts/build.mjs` 的替换参数是否同步。
 - 样式在浏览器未更新：确认 HTML 中资源版本参数已经变化，并检查当前部署版本与 CDN 缓存。

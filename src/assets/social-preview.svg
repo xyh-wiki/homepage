@@ -1,11 +1,11 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" role="img" aria-labelledby="title desc">
   <title id="title">xyh.wiki 工具与项目</title>
-  <desc id="desc">在线工具与公开项目目录</desc>
+  <desc id="desc">工具实践与开发笔记</desc>
   <rect width="1200" height="630" fill="#ffffff"/>
   <rect x="72" y="72" width="1056" height="486" rx="8" fill="#f6f7f9" stroke="#dedfe3" stroke-width="2"/>
   <rect x="72" y="72" width="10" height="486" fill="#2457d6"/>
   <text x="132" y="176" fill="#2457d6" font-family="Arial,sans-serif" font-size="34" font-weight="700">xyh.wiki</text>
   <text x="132" y="325" fill="#18181b" font-family="Arial,sans-serif" font-size="84" font-weight="700">工具与项目</text>
   <line x1="132" y1="384" x2="1068" y2="384" stroke="#dedfe3" stroke-width="2"/>
-  <text x="132" y="450" fill="#62666d" font-family="Arial,sans-serif" font-size="30">在线工具、开发者内容与个人应用</text>
+  <text x="132" y="450" fill="#62666d" font-family="Arial,sans-serif" font-size="30">文件处理、文本清理与开源项目实践</text>
 </svg>

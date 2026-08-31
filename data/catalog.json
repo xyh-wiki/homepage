@@ -25,13 +25,13 @@
     "public": {
       "label": "公开访问",
       "listLabel": "",
-      "indexable": true,
+      "indexable": false,
       "boundary": "该入口无需登录即可访问。处理文件或提交内容前，请先阅读目标项目的隐私与使用说明。"
     },
     "public-demo": {
       "label": "公开演示",
       "listLabel": "演示",
-      "indexable": true,
+      "indexable": false,
       "boundary": "该入口用于功能演示。请勿提交秘密、个人信息、客户资料或生产环境文档，并结合来源核对输出结果。"
     },
     "private": {

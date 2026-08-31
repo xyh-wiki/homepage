@@ -1,8 +1,8 @@
 {
   "siteName": "xyh.wiki",
   "siteUrl": "https://xyh.wiki",
-  "tagline": "工具与项目",
-  "description": "xyh.wiki 提供在线工具、开发者项目和围绕文件处理、文本清理与开源阅读的原创使用指南，帮助访客理解工具边界并选择合适方案。",
+  "tagline": "工具实践与开发笔记",
+  "description": "xyh.wiki 记录浏览器工具、文件处理、文本清理和开源项目评估中的实际方法、限制与核对步骤，帮助读者在使用前做出更稳妥的判断。",
   "author": "xyh.wiki",
   "contactEmail": "hello@xyh.wiki",
   "updated": "2026-08-31"

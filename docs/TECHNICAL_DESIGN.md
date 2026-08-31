@@ -5,7 +5,7 @@
 
 ## 1. 目标与约束
 
-项目以最小技术栈生成完整、可抓取、易扩展的项目目录。没有数据库、服务端写接口、客户端框架或 UI 组件库，所有公开正文在构建阶段写入 HTML。
+项目以最小技术栈生成内容优先、可抓取、易维护的工具实践与开发笔记站点。没有数据库、服务端写接口、客户端框架或 UI 组件库，所有公开正文和文章元数据在构建阶段写入 HTML。
 
 视觉采用中性工作区风格：白色和浅灰背景、系统无衬线字体、单一蓝色强调、连续列表、细边线和稳定留白。不使用渐变、阴影、巨型衬线标题、眉题、大数字指标栏或广告占位元素。
 
@@ -14,7 +14,7 @@
 | 组件 | 版本/来源 | 用途 | 选择理由 |
 |---|---|---|---|
 | Node.js | 22，Docker 官方 Alpine 镜像 | 构建脚本与本地预览 | 原生 API 足够，无第三方依赖 |
-| HTML/CSS/JS | 浏览器原生 | 页面、样式、搜索筛选和 AdSense 加载 | 核心页面包体小，广告异步加载，禁用 JS 仍可阅读 |
+| HTML/CSS/JS | 浏览器原生 | 页面、样式、导航菜单和 AdSense 加载 | 核心页面包体小，广告异步加载，禁用 JS 仍可阅读 |
 | Caddy | 2.10.2-alpine | 生产静态服务与健康检查 | 配置简洁，支持安全响应头和真实 404 |
 | Node test runner | Node 22 内置 | 构建产物和数据边界测试 | 无新增测试依赖 |
 | Docker/Dokploy/Traefik | 现有部署平台 | 构建、运行、TLS 与路由 | 不占用宿主机 80/443 |
@@ -26,9 +26,10 @@
 ```text
 data/site.json              站点名称、地址和描述
 data/ads.txt                根域名广告授权声明
-data/catalog.json           分类与访问类型
-data/services.json          项目事实、搜索信息和使用建议
+data/catalog.json           工具参考页分类与访问类型
+data/services.json          工具事实、截图和使用建议
 src/content/*.md            指南、政策和说明正文
+src/assets/screenshots/     从实际工具页面采集的界面截图
 src/templates/*.html        页面外壳与页面模板
 src/assets/                 CSS、JavaScript 和 SVG
 scripts/build.mjs           校验、静态生成和 SEO 文件
@@ -40,26 +41,36 @@ deploy/dokploy-compose.yaml Dokploy Compose 模板
 
 依赖方向为：数据和内容 → 校验 → 构建器 → `dist`。生产运行时只读取 `dist`。
 
+`src/assets/screenshots/` 中的 WebP 截图均由维护者在 2026-08-31 访问对应的
+`*.xyh.wiki` 公开页面后采集，用于说明文章和工具参考页的实际界面，不作为功能、
+价格或持续可用性的承诺。截图必须保留准确 alt、宽高和采集日期。
+
 ## 4. 扩展机制
 
-### 添加现有分类中的项目
+### 添加实践指南
 
-在 `data/services.json` 增加记录。构建器自动生成：
+在 `scripts/build.mjs` 的 `articles` 配置中增加文章元数据，并在 `src/content/` 增加 Markdown 正文。构建器自动生成：
 
-- 首页项目行；
-- 本地搜索数据；
-- 项目详情页；
-- 页面 title、description 和 JSON-LD；
-- Sitemap 收录状态；
-- 首页项目总数。
+- 首页文章入口；
+- 文章页面；
+- 页面 title、description、canonical 和 JSON-LD；
+- Open Graph 文章类型；
+- Sitemap 条目；
+- 文章截图和更新时间。
+
+文章正文必须能够脱离广告和外部工具独立阅读，并明确说明来源、步骤、限制和结果核对方式。
+
+### 添加工具参考页
+
+在 `data/services.json` 增加记录。构建器生成带截图、适用人群、使用步骤和外部入口的参考页。参考页统一使用 `noindex,follow`，不会进入 Sitemap。
 
 ### 添加分类
 
-在 `data/catalog.json` 的 `categories` 中增加配置。首页筛选按钮、项目列表分类和详情页分类由同一份配置生成。
+在 `data/catalog.json` 的 `categories` 中增加配置，供工具参考页显示。
 
 ### 添加访问类型
 
-在 `data/catalog.json` 的 `availability` 中增加配置，并设置显示名称、首页短标记、索引策略和通用使用说明。
+在 `data/catalog.json` 的 `availability` 中增加配置，并设置显示名称、访问边界和参考页说明。当前所有工具参考页都不作为独立索引内容。
 
 ### 数据校验
 
@@ -72,7 +83,7 @@ deploy/dokploy-compose.yaml Dokploy Compose 模板
 - 摘要、语言和使用建议非空；
 - 适用用户非空，使用步骤至少 3 项；
 - 能力至少 3 项；
-- 搜索关键词非空；
+- 截图如存在则必须是本地 WebP，并声明采集日期和尺寸；
 - URL 为无显式端口的 HTTPS `xyh.wiki` 子域。
 
 模板替换后若仍存在未解析变量，构建直接失败。
@@ -97,43 +108,44 @@ deploy/dokploy-compose.yaml Dokploy Compose 模板
 - HTML 输出和 JSON-LD 对危险字符进行转义。
 - `host` 字段仅用于内部维护，渲染函数不读取该字段。
 - 回归测试扫描全部生成 HTML，禁止内部主机名、运行节点、维护节点、维护日期和未启用业务规划进入公开页面。
-- Caddy CSP 允许本站资源、AdSense 和 Google Privacy & Messaging 所需的 Google 脚本、连接、图片与框架域名；未为广告开放 `unsafe-inline` 或 `unsafe-eval`，核心页面不依赖广告脚本。
+- Caddy CSP 允许本站资源、AdSense 和 Google Privacy & Messaging 所需的 Google 脚本、连接、图片与框架域名；未为广告开放 `unsafe-inline` 或 `unsafe-eval`，首页和政策页不依赖广告脚本。
 - 容器使用 UID/GID 65532、只读根文件系统和 `no-new-privileges`。
 
 ## 7. SEO
 
 - 公开页面为 SSG，正文在初始 HTML。
 - 每页具有唯一 title、description、H1 和绝对 canonical。
-- 首页输出 `WebSite`、公开项目 `ItemList` 和实践指南内部链接。
+- 首页输出 `WebSite`、实践指南 `ItemList` 和内容内部链接。
 - 实践指南输出 `Article` 结构化数据、作者、发布日期和更新时间；正文使用初始 HTML 输出。
 - 实践指南的 Open Graph 类型为 `article`，目录、政策和项目说明页使用 `website`。
-- 项目页输出与可见内容一致的 `WebPage` 和 `WebApplication`。
-- Sitemap 仅包含允许索引的项目；其他项目页使用 `noindex,follow`。
+- 工具参考页输出与可见内容一致的 `WebPage` 和 `WebApplication`，但使用 `noindex,follow`。
+- Sitemap 只包含首页、站点说明页和原创实践指南，不包含工具参考页。
 - `/advertising/` 旧地址由 Caddy 永久跳转至 `/privacy/`，避免保留已经删除的公开规划页面。
-- 404 页面、首页、目录、项目说明和政策页显式关闭 AdSense；只有原创实践指南加载广告，避免在薄内容页面投放广告。
+- 404 页面、首页、工具参考页和政策页显式关闭 AdSense；只有原创实践指南加载广告，避免在薄内容页面投放广告。
 - 不输出 meta keywords、评分、用户数、伪发布日期或不可验证指标。
 
 ## 8. 性能与可访问性
 
-- 不加载远程字体、前端框架运行时和首屏图片；Google AdSense 作为异步第三方脚本加载。
+- 不加载远程字体、前端框架运行时和首页首屏图片；文章和参考页截图懒加载，Google AdSense 仅在原创实践指南异步加载。
 - CSS/JavaScript 使用内容哈希查询参数和长期缓存，HTML 使用 no-cache。
-- 搜索仅遍历当前页面项目行。
+- 首页不依赖搜索脚本，文章正文在初始 HTML 输出。
 - 保留跳过链接、语义结构、可见焦点和减少动态效果支持。
-- 首页精选项目与完整目录均使用连续列表；分类筛选在小屏横向滚动，避免多行控件挤压内容。
-- 原生 JavaScript 提供“更多”导航菜单、`/` 搜索快捷键、搜索清除、空结果清除和 `aria-pressed` 状态同步。
+- 首页指南和主题方向使用连续列表；文章截图在小屏自适应，不产生横向裁切。
+- 原生 JavaScript 仅提供“更多”导航菜单和隐私同意撤回入口。
 
 ## 9. 测试映射
 
 | 风险 | 自动化验证 |
 |---|---|
 | 页面漏生成 | 所有文章和项目路径存在 |
-| 分类硬编码或漏生成 | 分类配置对应筛选按钮，项目行数等于数据记录数 |
+| 指南漏生成 | 文章配置对应首页入口、页面和 Sitemap 条目 |
 | 元数据重复或缺失 | 可索引页面 title/description 唯一，canonical/H1/JSON-LD 存在 |
 | 非公开页被索引 | `noindex` 且 Sitemap 排除 |
 | 目标 URL 不安全 | HTTPS、目标域、无显式端口 |
 | 内部或规划信息泄露 | 扫描所有生成 HTML 的禁止词 |
 | 根域配置错误 | robots 与 Sitemap 使用正式域名 |
-| 首页交互不可访问 | 检查精选项目数量、导航菜单状态、搜索清除按钮和筛选 `aria-pressed` |
+| 首页交互不可访问 | 检查指南入口、主题链接、导航菜单状态和键盘焦点 |
+| 截图缺失或尺寸错误 | 检查每个声明截图的本地文件、WebP 格式、宽高和 alt |
 | 广告脚本策略错误 | 指南页各加载一次指定 AdSense 客户端脚本，首页、目录、政策页和 404 不加载 |
 | 广告授权文件缺失或内容错误 | 检查 `/ads.txt` 生成路径、精确内容和 HTTP 200 |
 | 错误页投放广告 | 检查 `404.html` 不包含 AdSense loader |

@@ -13,6 +13,10 @@
     "language": "中文界面",
     "audience": "需要在不上传媒体文件的情况下转换音频或视频的用户。",
     "steps": ["选择要处理的音频或视频文件", "确认输出格式与音频参数", "等待浏览器处理完成后下载结果"],
+    "screenshot": "/assets/screenshots/audio-convert.webp",
+    "screenshotDate": "2026-08-31",
+    "screenshotWidth": 1200,
+    "screenshotHeight": 750,
     "guidance": "转换前保留原始文件。大文件会占用浏览器内存和设备算力，建议先用较小样本确认格式和质量设置。"
   },
   {
@@ -29,6 +33,10 @@
     "language": "中文 / English / 日本語",
     "audience": "需要整理歌曲构思、歌词和多语言创作版本的创作者。",
     "steps": ["输入主题、风格或歌词草案", "调整歌曲结构和生成参数", "试听版本并保留需要继续修改的结果"],
+    "screenshot": "/assets/screenshots/sonora-studio.webp",
+    "screenshotDate": "2026-08-31",
+    "screenshotWidth": 1200,
+    "screenshotHeight": 750,
     "guidance": "音乐生成结果可能存在差异。公开发布前请检查歌词、音频内容、版权来源、供应商条款和目标平台规则。"
   },
   {
@@ -45,6 +53,10 @@
     "language": "English",
     "audience": "需要整理自己有权访问的 TikTok 分享链接并核对视频信息的用户。",
     "steps": ["粘贴自己有权处理的分享链接", "检查清理后的地址和预览元数据", "按照页面指引使用自己的直链保存内容"],
+    "screenshot": "/assets/screenshots/tiktok-link-checker.webp",
+    "screenshotDate": "2026-08-31",
+    "screenshotWidth": 1200,
+    "screenshotHeight": 750,
     "guidance": "该工具主要清理链接、预览元数据并提供手动操作指引，不保证自动下载。仅处理你有权访问和保存的内容，并遵守 TikTok 及相关内容的版权、隐私和平台规则。"
   },
   {
@@ -61,6 +73,10 @@
     "language": "English",
     "audience": "需要在浏览器中完成基础音频剪辑和导出的用户。",
     "steps": ["选择本地音频并设置裁剪范围", "按需要合并片段或调整音量", "试听并导出目标格式"],
+    "screenshot": "/assets/screenshots/soundloadmate.webp",
+    "screenshotDate": "2026-08-31",
+    "screenshotWidth": 1200,
+    "screenshotHeight": 750,
     "guidance": "音频处理在浏览器中进行，大文件可能占用较多内存和设备算力。导出或公开使用前请确认内容版权及目标平台要求。"
   },
   {
@@ -77,6 +93,10 @@
     "language": "English",
     "audience": "需要临时清理、格式化、比较或检查文本的用户。",
     "steps": ["选择与任务对应的文本工具", "粘贴或输入需要处理的内容", "检查处理结果后复制或下载"],
+    "screenshot": "/assets/screenshots/edittext-lab.webp",
+    "screenshotDate": "2026-08-31",
+    "screenshotWidth": 1200,
+    "screenshotHeight": 750,
     "guidance": "不要把密码、令牌或受保护的客户数据粘贴到尚未确认处理方式的工具中；重要内容应先保留副本。"
   },
   {
@@ -93,6 +113,10 @@
     "language": "中文",
     "audience": "需要发现开源项目并进行初步技术筛选的开发者。",
     "steps": ["选择日榜、周榜或月榜范围", "阅读项目摘要并打开原始仓库", "核对许可证、维护状态和安全信息"],
+    "screenshot": "/assets/screenshots/github-trending.webp",
+    "screenshotDate": "2026-08-31",
+    "screenshotWidth": 1200,
+    "screenshotHeight": 750,
     "guidance": "趋势和中文摘要适合初步筛选。进行技术选型时，还应检查原仓库的许可证、维护状态、安全公告、依赖和发布记录。"
   },
   {
@@ -109,6 +133,10 @@
     "language": "English",
     "audience": "希望用公开样例了解文档检索、问答和来源引用流程的用户。",
     "steps": ["从公开样例知识库提出问题", "查看回答引用的来源片段", "回到原文核对结论和上下文"],
+    "screenshot": "/assets/screenshots/knowledge-base-assistant.webp",
+    "screenshotDate": "2026-08-31",
+    "screenshotWidth": 1200,
+    "screenshotHeight": 750,
     "guidance": "回答可能不完整或存在理解偏差。请通过页面展示的来源核对结论，不要把演示结果直接用于高风险决策。"
   },
   {

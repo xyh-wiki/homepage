@@ -104,6 +104,16 @@ function validateData() {
     if (!Array.isArray(service.steps) || service.steps.length < 3 || service.steps.some((item) => typeof item !== 'string' || !item.trim())) {
       fail(`service ${service.slug}.steps must contain at least three non-empty strings`);
     }
+    if (service.screenshot !== undefined) {
+      requireText(service.screenshot, `service ${service.slug}.screenshot`);
+      requireText(service.screenshotDate, `service ${service.slug}.screenshotDate`);
+      if (!/^\/assets\/screenshots\/[a-z0-9-]+\.webp$/.test(service.screenshot)) {
+        fail(`service ${service.slug}.screenshot must be a local WebP asset`);
+      }
+      if (!Number.isInteger(service.screenshotWidth) || !Number.isInteger(service.screenshotHeight) || service.screenshotWidth < 1 || service.screenshotHeight < 1) {
+        fail(`service ${service.slug}.screenshot dimensions must be positive integers`);
+      }
+    }
     let url;
     try {
       url = new URL(service.url);
@@ -182,34 +192,6 @@ function shell({ title, description, route, body, pageId, robots = 'index,follow
   });
 }
 
-function serviceRow(service) {
-  const category = categories.get(service.category);
-  const access = availability.get(service.availability);
-  const search = [service.name, service.summary, ...service.features, ...service.keywords].join(' ');
-  return `<article class="service-row" data-service-row data-category="${escapeHtml(service.category)}" data-search="${escapeHtml(search)}">
-    <a class="service-row-link" href="/services/${escapeHtml(service.slug)}/">
-      <span class="service-name">${escapeHtml(service.name)}</span>
-      <span class="service-summary">${escapeHtml(service.summary)}</span>
-      <span class="service-meta">
-        <span>${escapeHtml(category.label)}</span>
-        ${access.listLabel ? `<span class="service-access">${escapeHtml(access.listLabel)}</span>` : ''}
-      </span>
-      <span class="service-arrow" aria-hidden="true">→</span>
-    </a>
-  </article>`;
-}
-
-function featuredRow(service) {
-  const category = categories.get(service.category);
-  const access = availability.get(service.availability);
-  return `<a class="featured-row" href="/services/${escapeHtml(service.slug)}/">
-    <span class="featured-name">${escapeHtml(service.name)}</span>
-    <span class="featured-summary">${escapeHtml(service.summary)}</span>
-    <span class="featured-meta">${escapeHtml(category.filterLabel)}${access.listLabel ? ` · ${escapeHtml(access.listLabel)}` : ''}</span>
-    <span class="service-arrow" aria-hidden="true">→</span>
-  </a>`;
-}
-
 async function writeRoute(route, html) {
   const target = route === '/' ? path.join(dist, 'index.html') : path.join(dist, route, 'index.html');
   await mkdir(path.dirname(target), { recursive: true });
@@ -263,7 +245,14 @@ const articles = {
     file: 'audio-local.md',
     includeAds: true,
     kind: 'guide',
-    updated: '2026-08-31'
+    updated: '2026-08-31',
+    media: {
+      src: '/assets/screenshots/audio-convert.webp',
+      alt: 'Audio Convert 浏览器本地音视频转换工作区截图',
+      width: 1200,
+      height: 750,
+      date: '2026-08-31'
+    }
   },
   'json-cleaning': {
     title: 'JSON 文本清理与格式化：从报错定位到结果核对',
@@ -271,7 +260,14 @@ const articles = {
     file: 'json-cleaning.md',
     includeAds: true,
     kind: 'guide',
-    updated: '2026-08-31'
+    updated: '2026-08-31',
+    media: {
+      src: '/assets/screenshots/edittext-lab.webp',
+      alt: 'EditText Lab 在线文本工具界面截图',
+      width: 1200,
+      height: 750,
+      date: '2026-08-31'
+    }
   },
   'github-evaluation': {
     title: '如何判断一个 GitHub 项目是否值得继续使用',
@@ -279,7 +275,14 @@ const articles = {
     file: 'github-evaluation.md',
     includeAds: true,
     kind: 'guide',
-    updated: '2026-08-31'
+    updated: '2026-08-31',
+    media: {
+      src: '/assets/screenshots/github-trending.webp',
+      alt: 'GitHub 热门项目中文榜界面截图',
+      width: 1200,
+      height: 750,
+      date: '2026-08-31'
+    }
   },
   'browser-privacy': {
     title: '浏览器本地工具真的不上传文件吗？一份实用核对清单',
@@ -287,7 +290,14 @@ const articles = {
     file: 'browser-privacy.md',
     includeAds: true,
     kind: 'guide',
-    updated: '2026-08-31'
+    updated: '2026-08-31',
+    media: {
+      src: '/assets/screenshots/soundloadmate.webp',
+      alt: 'Soundloadmate 浏览器音频编辑器界面截图',
+      width: 1200,
+      height: 750,
+      date: '2026-08-31'
+    }
   }
 };
 
@@ -299,13 +309,15 @@ function guideLink(article, slug) {
   </a>`;
 }
 
+function articleMedia(article) {
+  if (!article.media) return '';
+  return `<figure class="article-media">
+    <img src="${escapeHtml(article.media.src)}" alt="${escapeHtml(article.media.alt)}" width="${article.media.width}" height="${article.media.height}" loading="lazy" decoding="async">
+    <figcaption>相关工具界面截图，采集于 ${escapeHtml(article.media.date)}。截图用于说明文章中的操作对象，页面可能随工具更新。</figcaption>
+  </figure>`;
+}
+
 const homeBody = replace(homeTemplate, {
-  SERVICE_COUNT: services.length,
-  CATEGORY_FILTERS: catalog.categories
-    .map((category) => `<button type="button" class="filter" aria-pressed="false" data-filter="${escapeHtml(category.id)}">${escapeHtml(category.filterLabel)}</button>`)
-    .join('\n'),
-  FEATURED_ROWS: services.filter((service) => service.featured).map(featuredRow).join('\n'),
-  SERVICE_ROWS: services.map(serviceRow).join('\n'),
   GUIDE_LINKS: Object.entries(articles)
     .filter(([, article]) => article.kind === 'guide')
     .map(([slug, article]) => guideLink(article, slug))
@@ -313,7 +325,7 @@ const homeBody = replace(homeTemplate, {
 });
 
 await writeRoute('/', shell({
-  title: `${site.siteName}｜在线工具与公开项目`,
+  title: `${site.siteName}｜工具实践与开发笔记`,
   description: site.description,
   route: '/',
   pageId: 'home',
@@ -321,13 +333,19 @@ await writeRoute('/', shell({
   includeAds: false,
   structuredData: [
     {
+      '@context': 'https://schema.org', '@type': 'Organization', name: site.author,
+      url: `${siteUrl}/`, email: site.contactEmail
+    },
+    {
       '@context': 'https://schema.org', '@type': 'WebSite', name: site.siteName,
       url: `${siteUrl}/`, description: site.description, inLanguage: 'zh-CN'
     },
     {
-      '@context': 'https://schema.org', '@type': 'ItemList', name: 'xyh.wiki 服务目录',
-      itemListElement: services.filter((item) => availability.get(item.availability).indexable).map((item, index) => ({
-        '@type': 'ListItem', position: index + 1, name: item.name, url: `${siteUrl}/services/${item.slug}/`
+      '@context': 'https://schema.org', '@type': 'ItemList', name: 'xyh.wiki 实践指南',
+      itemListElement: Object.entries(articles)
+        .filter(([, article]) => article.kind === 'guide')
+        .map(([slug, article], index) => ({
+        '@type': 'ListItem', position: index + 1, name: article.title, url: `${siteUrl}/${slug}/`
       }))
     }
   ]
@@ -341,7 +359,8 @@ for (const [slug, article] of Object.entries(articles)) {
     ARTICLE: renderMarkdown(markdown),
     ARTICLE_META: article.kind === 'guide'
       ? `<p class="article-meta">原创实践指南 · 更新于 ${escapeHtml(article.updated)}</p>`
-      : ''
+      : '',
+    ARTICLE_MEDIA: articleMedia(article)
   });
   await writeRoute(`/${slug}/`, shell({
     title: `${title}｜${site.siteName}`,
@@ -353,9 +372,10 @@ for (const [slug, article] of Object.entries(articles)) {
     body,
     structuredData: [article.kind === 'guide'
       ? {
-        '@context': 'https://schema.org', '@type': 'Article', headline: title,
+      '@context': 'https://schema.org', '@type': 'Article', headline: title,
         author: { '@type': 'Organization', name: site.author },
         dateModified: article.updated, datePublished: article.updated,
+        ...(article.media ? { image: `${siteUrl}${article.media.src}` } : {}),
         mainEntityOfPage: { '@type': 'WebPage', '@id': `${siteUrl}/${slug}/` },
         url: `${siteUrl}/${slug}/`, description, inLanguage: 'zh-CN',
         isPartOf: { '@type': 'WebSite', name: site.siteName, url: `${siteUrl}/` }
@@ -382,6 +402,12 @@ for (const service of services) {
     FEATURE_ITEMS: service.features.map((item) => `<li>${escapeHtml(item)}</li>`).join(''),
     SERVICE_STEPS: service.steps.map((item) => `<li>${escapeHtml(item)}</li>`).join(''),
     AUDIENCE_TEXT: escapeHtml(service.audience),
+    SCREENSHOT_BLOCK: service.screenshot
+      ? `<figure class="service-screenshot">
+      <img src="${escapeHtml(service.screenshot)}" alt="${escapeHtml(`${service.name} 当前界面截图`)}" width="${service.screenshotWidth}" height="${service.screenshotHeight}" loading="lazy" decoding="async">
+      <figcaption>界面截图，采集于 ${escapeHtml(service.screenshotDate)}。实际功能和页面可能随服务更新。</figcaption>
+    </figure>`
+      : '',
     BOUNDARY_TEXT: escapeHtml(access.boundary),
     GUIDANCE_TEXT: escapeHtml(service.guidance),
     LANGUAGE: escapeHtml(service.language)
@@ -392,7 +418,7 @@ for (const service of services) {
     route: `/services/${service.slug}/`,
     pageId: 'service',
     includeAds: false,
-    robots: access.indexable ? 'index,follow' : 'noindex,follow',
+    robots: 'noindex,follow',
     body,
     structuredData: [{
       '@context': 'https://schema.org', '@type': 'WebPage', name: service.name,
@@ -405,6 +431,7 @@ for (const service of services) {
 const notFoundBody = replace(articleTemplate, {
   BREADCRUMB: '页面不存在',
   ARTICLE_META: '',
+  ARTICLE_MEDIA: '',
   ARTICLE: renderMarkdown(await load('src/content/404.md'))
 });
 await writeFile(path.join(dist, '404.html'), shell({
@@ -413,7 +440,7 @@ await writeFile(path.join(dist, '404.html'), shell({
   route: '/404.html', pageId: 'not-found', robots: 'noindex,follow', body: notFoundBody, includeAds: false
 }));
 
-const indexedRoutes = ['/', ...Object.keys(articles).map((slug) => `/${slug}/`), ...services.filter((item) => availability.get(item.availability).indexable).map((item) => `/services/${item.slug}/`)];
+const indexedRoutes = ['/', ...Object.keys(articles).map((slug) => `/${slug}/`)];
 const sitemap = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${indexedRoutes.map((route) => `  <url><loc>${escapeHtml(siteUrl + route)}</loc></url>`).join('\n')}\n</urlset>\n`;
 await writeFile(path.join(dist, 'sitemap.xml'), sitemap);
 await writeFile(path.join(dist, 'robots.txt'), `User-agent: *\nAllow: /\n\nSitemap: ${siteUrl}/sitemap.xml\n`);
@@ -424,4 +451,4 @@ await writeFile(path.join(dist, 'site.webmanifest'), JSON.stringify({
 }, null, 2));
 await writeFile(path.join(dist, 'site-config.json'), JSON.stringify({ siteUrl, updated: site.updated }, null, 2));
 
-console.log(`Built ${indexedRoutes.length} indexable routes and ${services.length} service pages into ${dist}`);
+console.log(`Built ${indexedRoutes.length} indexable routes and ${services.length} reference pages into ${dist}`);

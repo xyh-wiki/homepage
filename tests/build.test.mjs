@@ -6,7 +6,6 @@ import test from 'node:test';
 const root = path.resolve(import.meta.dirname, '..');
 const dist = path.join(root, 'dist');
 const services = JSON.parse(await readFile(path.join(root, 'data/services.json'), 'utf8'));
-const catalog = JSON.parse(await readFile(path.join(root, 'data/catalog.json'), 'utf8'));
 const articles = [
   'about', 'guide', 'privacy', 'terms', 'contact', 'status',
   'audio-local', 'json-cleaning', 'github-evaluation', 'browser-privacy'
@@ -25,24 +24,19 @@ test('all expected pages are generated', async () => {
 
 test('catalog navigation is generated from category data', async () => {
   const home = await read('index.html');
-  for (const category of catalog.categories) {
-    assert.match(home, new RegExp(`data-filter="${category.id}"`));
-    assert.match(home, new RegExp(`>${category.filterLabel}<`));
-  }
-  assert.equal(one(home, /data-service-row/g), services.length);
+  for (const slug of adEnabledArticles) assert.match(home, new RegExp(`href="/${slug}/"`));
+  assert.match(home, /工具实践与<br>开发笔记/);
+  assert.doesNotMatch(home, /data-service-row/);
   assert.match(home, /\/assets\/styles\.css\?v=[a-f0-9]{12}/);
   assert.match(home, /\/assets\/site\.js\?v=[a-f0-9]{12}/);
 });
 
 test('homepage UI includes featured entries and accessible filtering controls', async () => {
   const home = await read('index.html');
-  const featured = services.filter((item) => item.featured);
-  assert.equal(one(home, /class="featured-row"/g), featured.length);
+  assert.equal(one(home, /class="guide-row"/g), adEnabledArticles.length);
+  assert.equal(one(home, /class="topic-row"/g), 4);
   assert.match(home, /class="nav-more-toggle"[^>]+aria-expanded="false"/);
   assert.match(home, /id="nav-more-menu"[^>]+hidden/);
-  assert.match(home, /class="search-clear"[^>]+hidden/);
-  assert.equal(one(home, /aria-pressed="true"/g), 1);
-  assert.equal(one(home, /aria-pressed="false"/g), catalog.categories.length);
   assert.match(home, /data-privacy-settings/);
 });
 
@@ -73,7 +67,7 @@ test('only substantive guide pages include the configured AdSense loader once', 
 });
 
 test('indexable pages have unique metadata, canonical, one h1 and visible body', async () => {
-  const routes = ['index.html', ...articles.map((slug) => `${slug}/index.html`), ...services.filter((item) => catalog.availability[item.availability].indexable).map((item) => `services/${item.slug}/index.html`)];
+  const routes = ['index.html', ...articles.map((slug) => `${slug}/index.html`)];
   const titles = new Set();
   const descriptions = new Set();
   for (const route of routes) {
@@ -98,14 +92,14 @@ test('guide pages provide substantive article markup and internal links', async 
     assert.match(html, /<p class="article-meta">原创实践指南 · 更新于 2026-08-31<\/p>/);
     assert.match(html, /"@type":"Article"/);
     assert.match(html, /"dateModified":"2026-08-31"/);
-    assert.match(html, /href="\/services\/[^"]+\/"/);
+    assert.match(html, /href="https:\/\/[a-z0-9-]+\.xyh\.wiki\/"/);
     assert.ok(html.replace(/<[^>]+>/g, '').length > 900, `${slug} should contain more than a short template description`);
   }
 });
 
-test('non-indexable service detail pages are noindex and excluded from sitemap', async () => {
+test('reference service pages are noindex and excluded from sitemap', async () => {
   const sitemap = await read('sitemap.xml');
-  for (const service of services.filter((item) => !catalog.availability[item.availability].indexable)) {
+  for (const service of services) {
     const html = await read(`services/${service.slug}/index.html`);
     assert.match(html, /<meta name="robots" content="noindex,follow">/);
     assert.ok(!sitemap.includes(`/services/${service.slug}/`));
@@ -119,6 +113,12 @@ test('service detail pages expose audience and concrete usage steps', async () =
     assert.match(html, /<h2>如何开始<\/h2>/);
     assert.equal(one(html, /<ol class="feature-list">/g), 1);
     for (const step of service.steps) assert.match(html, new RegExp(step.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
+    if (service.screenshot) {
+      assert.match(html, new RegExp(`src="${service.screenshot.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}"`));
+      assert.match(html, /<figure class="service-screenshot">/);
+      await stat(path.join(root, 'src', service.screenshot.slice(1)));
+      await stat(path.join(dist, service.screenshot.slice(1)));
+    }
   }
 });
 
