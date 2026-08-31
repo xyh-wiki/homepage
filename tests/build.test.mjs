@@ -7,7 +7,11 @@ const root = path.resolve(import.meta.dirname, '..');
 const dist = path.join(root, 'dist');
 const services = JSON.parse(await readFile(path.join(root, 'data/services.json'), 'utf8'));
 const catalog = JSON.parse(await readFile(path.join(root, 'data/catalog.json'), 'utf8'));
-const articles = ['about', 'guide', 'privacy', 'terms', 'contact', 'status'];
+const articles = [
+  'about', 'guide', 'privacy', 'terms', 'contact', 'status',
+  'audio-local', 'json-cleaning', 'github-evaluation', 'browser-privacy'
+];
+const adEnabledArticles = ['audio-local', 'json-cleaning', 'github-evaluation', 'browser-privacy'];
 
 const read = (relative) => readFile(path.join(dist, relative), 'utf8');
 const one = (html, pattern) => [...html.matchAll(pattern)].length;
@@ -42,7 +46,7 @@ test('homepage UI includes featured entries and accessible filtering controls', 
   assert.match(home, /data-privacy-settings/);
 });
 
-test('ad-enabled generated pages include the configured AdSense loader once', async () => {
+test('only substantive guide pages include the configured AdSense loader once', async () => {
   const htmlFiles = [];
   async function collect(directory) {
     for (const entry of await readdir(directory, { withFileTypes: true })) {
@@ -52,7 +56,7 @@ test('ad-enabled generated pages include the configured AdSense loader once', as
     }
   }
   await collect(dist);
-  for (const file of htmlFiles.filter((file) => !file.endsWith('/404.html'))) {
+  for (const file of htmlFiles.filter((file) => adEnabledArticles.some((slug) => file.endsWith(`/${slug}/index.html`)))) {
     const html = await readFile(file, 'utf8');
     assert.equal(
       one(html, /https:\/\/pagead2\.googlesyndication\.com\/pagead\/js\/adsbygoogle\.js\?client=ca-pub-8907413334960000/g),
@@ -60,6 +64,10 @@ test('ad-enabled generated pages include the configured AdSense loader once', as
       `${path.relative(dist, file)} must include one AdSense loader`
     );
     assert.match(html, /crossorigin="anonymous"/);
+  }
+  for (const file of htmlFiles.filter((file) => !file.endsWith('/404.html') && !adEnabledArticles.some((slug) => file.endsWith(`/${slug}/index.html`)))) {
+    const html = await readFile(file, 'utf8');
+    assert.doesNotMatch(html, /adsbygoogle\.js/, `${path.relative(dist, file)} must not load AdSense on thin or directory pages`);
   }
   assert.doesNotMatch(await read('404.html'), /adsbygoogle\.js/);
 });
@@ -82,12 +90,35 @@ test('indexable pages have unique metadata, canonical, one h1 and visible body',
   }
 });
 
+test('guide pages provide substantive article markup and internal links', async () => {
+  for (const slug of adEnabledArticles) {
+    const html = await read(`${slug}/index.html`);
+    assert.match(html, /<meta name="robots" content="index,follow">/);
+    assert.match(html, /<meta property="og:type" content="article">/);
+    assert.match(html, /<p class="article-meta">原创实践指南 · 更新于 2026-08-31<\/p>/);
+    assert.match(html, /"@type":"Article"/);
+    assert.match(html, /"dateModified":"2026-08-31"/);
+    assert.match(html, /href="\/services\/[^"]+\/"/);
+    assert.ok(html.replace(/<[^>]+>/g, '').length > 900, `${slug} should contain more than a short template description`);
+  }
+});
+
 test('non-indexable service detail pages are noindex and excluded from sitemap', async () => {
   const sitemap = await read('sitemap.xml');
   for (const service of services.filter((item) => !catalog.availability[item.availability].indexable)) {
     const html = await read(`services/${service.slug}/index.html`);
     assert.match(html, /<meta name="robots" content="noindex,follow">/);
     assert.ok(!sitemap.includes(`/services/${service.slug}/`));
+  }
+});
+
+test('service detail pages expose audience and concrete usage steps', async () => {
+  for (const service of services) {
+    const html = await read(`services/${service.slug}/index.html`);
+    assert.match(html, /<h2>适合谁<\/h2>/);
+    assert.match(html, /<h2>如何开始<\/h2>/);
+    assert.equal(one(html, /<ol class="feature-list">/g), 1);
+    for (const step of service.steps) assert.match(html, new RegExp(step.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
   }
 });
 

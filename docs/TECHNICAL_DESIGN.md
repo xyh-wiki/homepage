@@ -1,7 +1,7 @@
 # 技术设计
 
-- 版本：1.1
-- 日期：2026-08-25
+- 版本：1.2
+- 日期：2026-08-31
 
 ## 1. 目标与约束
 
@@ -70,6 +70,7 @@ deploy/dokploy-compose.yaml Dokploy Compose 模板
 - 项目 slug、名称和 URL 唯一；
 - 项目引用的分类与访问类型存在；
 - 摘要、语言和使用建议非空；
+- 适用用户非空，使用步骤至少 3 项；
 - 能力至少 3 项；
 - 搜索关键词非空；
 - URL 为无显式端口的 HTTPS `xyh.wiki` 子域。
@@ -81,7 +82,7 @@ deploy/dokploy-compose.yaml Dokploy Compose 模板
 1. 并行读取站点配置、目录配置、项目数据和模板。
 2. 解析 JSON 并执行数据校验。
 3. 对公开数据执行 HTML 转义。
-4. 生成首页、文章页、项目详情页和 404。
+4. 生成首页、文章页、实践指南页、项目详情页和 404。
 5. 根据访问类型的 `indexable` 配置决定 robots 与 Sitemap。
 6. 生成 canonical、Open Graph、Twitter Card、JSON-LD、robots、Sitemap 和 Manifest。
 7. 根据 CSS、JavaScript 和 SVG 内容生成短哈希版本参数，避免发布后继续使用旧缓存。
@@ -103,11 +104,13 @@ deploy/dokploy-compose.yaml Dokploy Compose 模板
 
 - 公开页面为 SSG，正文在初始 HTML。
 - 每页具有唯一 title、description、H1 和绝对 canonical。
-- 首页输出 `WebSite` 与公开项目 `ItemList`。
+- 首页输出 `WebSite`、公开项目 `ItemList` 和实践指南内部链接。
+- 实践指南输出 `Article` 结构化数据、作者、发布日期和更新时间；正文使用初始 HTML 输出。
+- 实践指南的 Open Graph 类型为 `article`，目录、政策和项目说明页使用 `website`。
 - 项目页输出与可见内容一致的 `WebPage` 和 `WebApplication`。
 - Sitemap 仅包含允许索引的项目；其他项目页使用 `noindex,follow`。
 - `/advertising/` 旧地址由 Caddy 永久跳转至 `/privacy/`，避免保留已经删除的公开规划页面。
-- 404 页面使用同一页面外壳但显式关闭 AdSense，避免在无内容错误页投放广告。
+- 404 页面、首页、目录、项目说明和政策页显式关闭 AdSense；只有原创实践指南加载广告，避免在薄内容页面投放广告。
 - 不输出 meta keywords、评分、用户数、伪发布日期或不可验证指标。
 
 ## 8. 性能与可访问性
@@ -131,7 +134,7 @@ deploy/dokploy-compose.yaml Dokploy Compose 模板
 | 内部或规划信息泄露 | 扫描所有生成 HTML 的禁止词 |
 | 根域配置错误 | robots 与 Sitemap 使用正式域名 |
 | 首页交互不可访问 | 检查精选项目数量、导航菜单状态、搜索清除按钮和筛选 `aria-pressed` |
-| 广告脚本漏装或重复 | 扫描全部生成 HTML，确认每页仅加载一次指定 AdSense 客户端脚本 |
+| 广告脚本策略错误 | 指南页各加载一次指定 AdSense 客户端脚本，首页、目录、政策页和 404 不加载 |
 | 广告授权文件缺失或内容错误 | 检查 `/ads.txt` 生成路径、精确内容和 HTTP 200 |
 | 错误页投放广告 | 检查 `404.html` 不包含 AdSense loader |
 
